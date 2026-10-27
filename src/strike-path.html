@@ -805,6 +805,13 @@ input.tick:checked{background:var(--acc);border-color:var(--acc)}
 .addex{margin-top:16px}
 .skipnote{font-size:13px;color:var(--muted);margin:12px 0 0;line-height:1.8}
 .skipnote .linkbtn{font-size:13px;padding:2px 4px}
+/* lesson-fixes: safe area for the camera cutout and home bar */
+dialog.lesson{margin:calc(env(safe-area-inset-top,0px) + 8px) auto calc(env(safe-area-inset-bottom,0px) + 8px);height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px);max-height:none}
+.closebtn{width:44px;height:44px;top:10px;right:10px;background:rgba(10,14,15,.85);border-color:rgba(233,230,223,.25);z-index:5}
+.closebtn svg{width:18px;height:18px}
+.lesson-left{padding-top:22px}
+.lesson-left > div:first-child{padding-right:52px}
+.sheet,#acctDlg{max-height:calc(100dvh - 2 * env(safe-area-inset-top,0px) - 24px)!important}
 </style>
 </head>
 <body>
@@ -1450,8 +1457,8 @@ function geo() {
     mLead:M(0xe9b78e), mRear:M(0xe9b78e), mTorso:M(0xe9b78e), mTrunk:M(0x8fd3f4, {roughness:.55}),
     mBand:M(0x1d3d7a, {roughness:.5}), mBoot:M(0x8fd3f4, {roughness:.45}), mWhite:M(0xf5f5f7), shortLeg:new THREE.CylinderGeometry(1, 1.18, 1, 16),
     mHair:M(0x141419, {roughness:.85}), mEye:M(0x0e0e12), mShoeL:M(0xf4f4f6), mShoeR:M(0x8f96a8), hairSpike:new THREE.ConeGeometry(.034, .12, 6), mGloveL:M(0xf04a33, {roughness:.4}), mGloveR:M(0x9c1c13, {roughness:.4}),
-    mDark:M(0x1d2130), mFloor:new THREE.MeshStandardMaterial({color:0x111a1c, roughness:.95}),
-    mBag:new THREE.MeshStandardMaterial({color:0x9a3a2c, roughness:.7, transparent:true, opacity:.32, depthWrite:false}),
+    mDark:M(0x1d2130), mFloor:new THREE.MeshStandardMaterial({color:0x2b4448, roughness:.9}),
+    mBag:new THREE.MeshStandardMaterial({color:0xb84a33, roughness:.6, transparent:true, opacity:.68, depthWrite:false}),
     mShadow:new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:.32, depthWrite:false}),
     mTrailHand:new THREE.MeshBasicMaterial({color:0xff5a44, transparent:true, opacity:.75}),
     mTrailFoot:new THREE.MeshBasicMaterial({color:0xf2b632, transparent:true, opacity:.75}),
@@ -1469,7 +1476,7 @@ function buildWorld(scene) {
   const key = new THREE.DirectionalLight(0xffffff, .85); key.position.set(2.5, 4, 3); scene.add(key);
   const rim = new THREE.DirectionalLight(0xffd9a3, .4); rim.position.set(-3, 2, -2.5); scene.add(rim);
   const floor = new THREE.Mesh(new THREE.CircleGeometry(2.4, 56), G.mFloor); floor.rotation.x = -Math.PI / 2; scene.add(floor);
-  const grid = new THREE.GridHelper(3.2, 16, 0x24363a, 0x18252a); grid.position.y = .002; scene.add(grid);
+  const grid = new THREE.GridHelper(3.2, 16, 0x5d8388, 0x3a575b); grid.position.y = .002; scene.add(grid);
   const bag = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, 1.15, 28), G.mBag); bag.position.set(1.1, 1.08, 0); scene.add(bag);
   const chain = new THREE.Mesh(G.cyl, G.mDark); chain.scale.set(.012, .55, .012); chain.position.set(1.1, 1.93, 0); scene.add(chain);
   const mark = new THREE.Mesh(new THREE.RingGeometry(.2, .23, 40), new THREE.MeshBasicMaterial({color:0xc8321f, transparent:true, opacity:.5})); mark.rotation.x = -Math.PI / 2; mark.position.set(1.1, .004, 0); scene.add(mark);
@@ -1696,7 +1703,7 @@ function makeStage(host, opts = {}) {
     pose(name) { playing = false; still = resolve(name); stillBag = bagFor(name); trails.clear(); },
     speed(v) { speed = v; },
     mirror(on) { root.scale.z = on ? -1 : 1; },
-    guides(on) { fig.guides(on); if (hud) hud.hidden = !on; },
+    guides(on) { fig.guides(on); if (hud) hud.hidden = !on; const lg = host.querySelector(".legend"); if (lg) lg.hidden = !on; },
     view(name) { const v = VIEW[name]; if (v) { cam.taz = v[0]; cam.tel = v[1]; lastDrag = performance.now(); } },
     pause(v) { paused = v; setRunning(visible); },
     get playing() { return playing; }
