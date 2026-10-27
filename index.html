@@ -1186,10 +1186,10 @@ const MOVES = [
    frames:["roll1","roll2"]},
   {id:"teep", lv:0, name:"Teep", tag:"A front push kick that keeps opponents at the end of your leg.", call:"Teep",
    steps:["Raise your lead knee toward your chest, hands up.",
-          "Push the ball of the foot (or the heel) straight into the target's belly or hips.",
-          "Lean slightly back and drive your hips forward for power.",
-          "Pull the leg back and set it down in stance."],
-   warn:["Flicking the leg instead of pushing through.","Kicking without lifting the knee first.","Dropping your hands as the leg goes out."],
+          "Pull your toes back so the ball of your foot faces the target.",
+          "Drive the ball of the foot straight through the belly, pushing your hips forward into it. Stay mostly upright with only a slight lean back.",
+          "Pull the knee back to the chamber, then set the foot down in stance."],
+   warn:["Pointing your toes: you'll jam or break them, and the kick glances off.","Flicking the leg instead of pushing through.","Leaning far back: you lose balance and power.","Kicking without lifting the knee first, or dropping your hands as the leg goes out."],
    drill:"Teep the bag 20 times with each leg. Then 3 × 2 min mixing in jab-teep.",
    frames:["chamberL","teep"]},
   {id:"body", lv:1, name:"Body Kick", tag:"The signature roundhouse: your shin swings into the ribs like a bat.", call:"Body kick",
@@ -1360,8 +1360,8 @@ const POSES = {
   slip:{hip:[.06,.75,.07], yawS:55, yawH:45, lean:[.22,.22]},
   roll1:{hip:[0,.64,-.05], yawS:40, lean:[.32,-.22]},
   roll2:{hip:[.02,.66,.07], yawS:50, lean:[.3,.24]},
-  chamberL:{hip:[-.03,.85,.03], lean:[-.08,0], LF:[.25,.48,-.12], LFp:[1,.3,0]},
-  teep:{hip:[-.06,.86,.04], lean:[-.2,0], LF:[.9,.72,-.08], LFp:[0,1,0]},
+  chamberL:{hip:[-.02,.85,.03], lean:[-.06,0], LF:[.27,.5,-.12], LFp:[1,.4,0], LFflex:.85},
+  teep:{hip:[.07,.86,.03], lean:[-.12,0], LF:[.92,.84,-.08], LFp:[0,1,0], LFflex:1},
   bodyCh:{hip:[.02,.84,.02], yawH:-20, yawS:0, lean:[-.08,.1], LFyaw:-20, RF:[.1,.55,.2], RFp:[1,.3,-.3]},
   body:{hip:[.02,.86,.02], yawH:-90, yawS:-45, lean:[-.22,.18], LF:[.30,.08,-.14], LFyaw:-85, RF:[.97,1.1,-.33], RFp:[.2,1,0], RHa:{to:[-.7,.72,.6], elbow:165}, RHp:[0,-.3,1]},
   lowCh:{yawH:0, yawS:10, lean:[-.05,.08], LFyaw:0, RF:[-.02,.4,.22], RFp:[1,.2,-.2]},
@@ -1380,7 +1380,7 @@ const POSES = {
   spinTurn:{hip:[.04,.82,.02], yawH:175, yawS:195, lean:[.05,0], LF:[.12,0,.22], LFyaw:180, RFyaw:150},
   backfist:{hip:[.08,.79,0], yawH:280, yawS:300, LF:[.12,0,.22], LFyaw:300, RF:[-.3,0,.05], RFyaw:300, RH:[1.0,1.42,.08], RHp:[0,.2,1]},
   backCh:{hip:[0,.84,.02], yawH:200, yawS:200, lean:[-.15,0], LF:[.12,0,.22], LFyaw:200, RF:[0,.45,0], RFp:[-1,0,0]},
-  backKick:{hip:[-.02,.84,.02], yawH:200, yawS:195, lean:[-.35,0], LF:[.12,0,.22], LFyaw:200, RF:[.98,.95,.08], RFp:[0,-1,0]},
+  backKick:{hip:[-.02,.84,.02], yawH:200, yawS:195, lean:[-.35,0], LF:[.12,0,.22], LFyaw:200, RF:[.98,.95,.08], RFp:[0,-1,0], RFflex:1},
   flyKnee:{hip:[.3,1.12,0], yawH:0, yawS:10, lean:[-.1,0], RF:[.3,.72,.08], RFp:[1,.6,0], LF:[-.05,.55,-.14], LFp:[1,-.3,0], LH:[.78,1.7,-.12], LHp:[0,-1,-.5], RH:[.78,1.7,.12], RHp:[0,-1,.5], bag:.95}
 };
 const A3 = {
@@ -1422,7 +1422,9 @@ function resolve(name) {
     LHp:s.LHp || sum(A3.mul(u, -1), A3.mul(r, -.35), A3.mul(c, -.1)),
     RHp:s.RHp || sum(A3.mul(u, -1), A3.mul(r, .35), A3.mul(c, -.1)),
     LFp:s.LFp || A3.add(yawDir(s.LFyaw), [0, .15, 0]),
-    RFp:s.RFp || A3.add(yawDir(s.RFyaw), [0, .15, 0])
+    RFp:s.RFp || A3.add(yawDir(s.RFyaw), [0, .15, 0]),
+    // ankle flex for a foot in the air: 0 toes pointed along the shin, 1 toes pulled back toward the knee
+    LFflex:s.LFflex || 0, RFflex:s.RFflex || 0
   };
   return (RES_CACHE[name] = out);
 }
@@ -1469,11 +1471,16 @@ function solve(res) {
   const hpL = hip.clone().addScaledVector(rh, -DIM.hipw), hpR = hip.clone().addScaledVector(rh, DIM.hipw);
   const aL = ik(shL, V3(res.LH), DIM.ua, DIM.fa, V3(res.LHp)), aR = ik(shR, V3(res.RH), DIM.ua, DIM.fa, V3(res.RHp));
   const lL = ik(hpL, V3(res.LF), DIM.thigh, DIM.shin, V3(res.LFp)), lR = ik(hpR, V3(res.RF), DIM.thigh, DIM.shin, V3(res.RFp));
-  const toe = (leg, yaw) => {
+  const toe = (leg, yaw, flex, pole) => {
     if (leg.end.y < .14) { const d = yawDir(yaw), h = Math.sqrt(Math.max(.0025, .029 - Math.pow(leg.end.y - .03, 2))); return new THREE.Vector3(leg.end.x + d[0] * h, .03, leg.end.z + d[2] * h); }
-    return leg.end.clone().addScaledVector(leg.end.clone().sub(leg.mid).normalize(), .16);
+    const shin = leg.end.clone().sub(leg.mid).normalize();
+    if (!flex) return leg.end.clone().addScaledVector(shin, .16);
+    // pulling the toes back turns the foot toward the front of the shin (the side the kneecap faces)
+    const front = pole.clone().addScaledVector(shin, -pole.dot(shin)); if (front.lengthSq() < 1e-6) front.set(0, 1, 0); front.normalize();
+    const a = Math.min(1, flex) * 95 * D2R;
+    return leg.end.clone().addScaledVector(shin, .16 * Math.cos(a)).addScaledVector(front, .16 * Math.sin(a));
   };
-  return {hip, sc, head, c, r, u, rh, shL, shR, hpL, hpR, aL, aR, lL, lR, toeL:toe(lL, res.LFyaw), toeR:toe(lR, res.RFyaw)};
+  return {hip, sc, head, c, r, u, rh, shL, shR, hpL, hpR, aL, aR, lL, lR, toeL:toe(lL, res.LFyaw, res.LFflex, V3(res.LFp)), toeR:toe(lR, res.RFyaw, res.RFflex, V3(res.RFp))};
 }
 
 let GEO = null;
