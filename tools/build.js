@@ -22,6 +22,6 @@ swap("</body>",
   "</body>");
 
 fs.writeFileSync(path.join(root, "index.html"), html);
-const version = crypto.createHash("sha1").update(html + fs.readFileSync(path.join(root, "sync.js"))).digest("hex").slice(0, 10);
+const version = crypto.createHash("sha1").update(html + fs.readFileSync(path.join(root, "sync.js")) + fs.readFileSync(path.join(root, "config.js"))).digest("hex").slice(0, 10);
 fs.writeFileSync(path.join(root, "sw.js"), fs.readFileSync(path.join(__dirname, "sw.template.js"), "utf8").replace("__VERSION__", version));
 console.log("built index.html and sw.js (cache " + version + ")");
