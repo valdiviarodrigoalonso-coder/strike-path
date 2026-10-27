@@ -2369,9 +2369,10 @@ initCloud();
 // ---- moving progress between copies of the app ----
 const APP_URL = "https://valdiviarodrigoalonso-coder.github.io/strike-path/";
 const isApp = !!window.SP_CONFIG;   // the installable app ships config.js; the Claude-hosted page doesn't
+const hasProgress = r => !!(Object.keys(r.checks).length || r.lifts.logs.length || r.runs.length || r.sessions.length || r.rounds);
 function restoreFrom(d) {
   const r = normalize(d);
-  if (!Object.keys(r.checks).length && !r.lifts.logs.length && !r.runs.length && !r.sessions.length && !r.rounds) throw new Error("empty");
+  if (!hasProgress(r)) throw new Error("empty");
   S = r; persist(); liftDay = nextLiftDay(); renderAll();
   toast("Progress brought in", "big");
 }
@@ -2397,6 +2398,7 @@ const fmtCode = c => c.slice(0, 3) + "-" + c.slice(3);
 $("codeMake").addEventListener("click", async () => {
   const T2 = window.StrikePath && window.StrikePath.transfer;
   if (!T2) { $("codeNote").textContent = "Short codes need sync set up and an internet connection."; return; }
+  if (!hasProgress(S)) { $("codeOut").textContent = ""; $("codeNote").textContent = "Nothing to send yet. Learn a move or log a workout first."; return; }
   $("codeMake").disabled = true; $("codeOut").textContent = ""; $("codeNote").textContent = "Making a code…";
   try {
     const code = await T2.create(JSON.parse(JSON.stringify(S)));
@@ -2417,7 +2419,8 @@ $("codeUse").addEventListener("click", async () => {
   try {
     const d = await T2.claim(code);
     if (!d) { $("codeMsg").textContent = "That code didn't work. It may have expired or already been used; get a new one."; return; }
-    restoreFrom(d); $("codeMsg").textContent = "Done. Your progress is on this device" + (window.StrikePath.signedIn ? " and syncing." : "."); $("codeIn").value = "";
+    try { restoreFrom(d); } catch (e) { $("codeMsg").textContent = "That code had no progress in it, so nothing changed here."; return; }
+    $("codeMsg").textContent = "Done. Your progress is on this device" + (window.StrikePath.signedIn ? " and syncing." : "."); $("codeIn").value = "";
   } catch (e) { $("codeMsg").textContent = "Couldn't fetch that code. Check your connection and try again."; }
 });
 // arriving from the Claude-hosted page's "Open in the app" link
