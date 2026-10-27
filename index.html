@@ -2464,7 +2464,16 @@ if (window.StrikePath.ready) window.StrikePath.ready();
 })();
 </script>
 <script>
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+// Offline support. Check for a new version every time the app opens or comes back to the front,
+// and reload once when a new version takes over so you never sit on an old copy.
+if ("serviceWorker" in navigator) window.addEventListener("load", () => {
+  const had = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
+  navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => {
+    reg.update().catch(() => {});
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") reg.update().catch(() => {}); });
+  }).catch(() => {});
+});
 </script>
 </body>
 </html>

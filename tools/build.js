@@ -18,7 +18,17 @@ swap('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.mi
   '<script src="vendor/three.min.js"></script>\n<script src="vendor/supabase.js"></script>\n<script src="config.js"></script>\n<script src="sync.js"></script>',
   "three.js script tag");
 swap("</body>",
-  '<script>\nif ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));\n</script>\n</body>',
+  '<script>\n' +
+  '// Offline support. Check for a new version every time the app opens or comes back to the front,\n' +
+  '// and reload once when a new version takes over so you never sit on an old copy.\n' +
+  'if ("serviceWorker" in navigator) window.addEventListener("load", () => {\n' +
+  '  const had = !!navigator.serviceWorker.controller; let reloaded = false;\n' +
+  '  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !reloaded) { reloaded = true; location.reload(); } });\n' +
+  '  navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => {\n' +
+  '    reg.update().catch(() => {});\n' +
+  '    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") reg.update().catch(() => {}); });\n' +
+  '  }).catch(() => {});\n' +
+  '});\n</script>\n</body>',
   "</body>");
 
 fs.writeFileSync(path.join(root, "index.html"), html);

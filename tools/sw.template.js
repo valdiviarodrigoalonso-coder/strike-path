@@ -6,7 +6,8 @@ const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./config.js", ".
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache: "reload" skips the browser's HTTP cache (GitHub Pages allows 10 minutes), so a new version caches new files
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, {cache:"reload"})))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
@@ -21,7 +22,7 @@ self.addEventListener("fetch", e => {
   if (url.hostname.endsWith("supabase.co") || url.hostname.endsWith("supabase.in")) return;
   // the page: try the network first so updates arrive, fall back to the cached copy offline
   if (req.mode === "navigate") {
-    e.respondWith(fetch(req).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put("./index.html", copy)); return res; })
+    e.respondWith(fetch(req, {cache:"no-store"}).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put("./index.html", copy)); return res; })
       .catch(() => caches.match("./index.html")));
     return;
   }
