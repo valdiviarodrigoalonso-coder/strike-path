@@ -19,6 +19,11 @@
 
   async function start() {
     sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {auth:{persistSession:true, autoRefreshToken:true}});
+    // short transfer codes (supabase/transfer.sql): no account needed, one use, gone after an hour
+    window.StrikePath.transfer = {
+      async create(state) { const {data, error} = await sb.rpc("create_transfer", {payload:state}); if (error) throw error; return data; },
+      async claim(code) { const {data, error} = await sb.rpc("claim_transfer", {code_in:code}); if (error) throw error; return data; }
+    };
     sb.auth.onAuthStateChange((_ev, session) => {
       const was = user && user.id; user = session ? session.user : null;
       paintAccount();
@@ -72,6 +77,7 @@
     sync.insertAdjacentElement("afterend", b);
   }
   function paintAccount() {
+    window.StrikePath.signedIn = !!user;
     const b = document.getElementById("acctBtn");
     if (b) b.textContent = user ? "Account" : "Sign in to sync";
     if (dlg && dlg.open) fillDialog();

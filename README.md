@@ -25,6 +25,7 @@ offline changes upload when the connection comes back. The newer copy wins.
 ### 1. Supabase (free login and sync)
 1. Create a free account at supabase.com and a new project (any name, pick a region near you).
 2. In the project: **SQL Editor → New query**, paste everything from `supabase/schema.sql`, and click **Run**.
+   Do the same with `supabase/transfer.sql` to turn on short transfer codes.
 3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into `config.js`.
 4. **Authentication → Providers → Email**: either keep "Confirm email" on (you'll click a link the first time you sign up),
    or turn it off for the quickest setup since it's just for you.
@@ -42,9 +43,13 @@ offline changes upload when the connection comes back. The newer copy wins.
 
 Then tap **Sign in to sync** (under your rank) and create your account. Use the same account on your computer.
 
-### Bringing over your existing progress
-In the old copy (the Claude-hosted page): **Trophies → Copy backup code**.
-In the app: **Trophies → Paste a backup code → Restore**.
+### Moving your progress
+- **Between devices running the app:** sign in to sync on both. Or, without an account, use a short code:
+  **Trophies → Get a code** on one device (like `K7Q-4MZ`), then type it under
+  **Got a code from your other device?** on the other. Codes work once and expire after an hour.
+- **From the Claude-hosted page:** **Trophies → Open in the Strike Path app**. The app opens with your progress
+  and asks before bringing it in. Do this on the computer, sign in there, and your phone gets it through sync.
+- A long copy-and-paste backup code is still under **Long backup code**, for the same device.
 
 ## Making changes
 1. Edit `src/strike-path.html`.
