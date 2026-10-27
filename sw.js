@@ -1,5 +1,5 @@
 // Strike Path offline cache. tools/build.js stamps the version, so each new build replaces the old cache.
-const VERSION = "03e91168e9";
+const VERSION = "3a3868eb59";
 const CACHE = "strikepath-" + VERSION;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./config.js", "./sync.js",
   "./vendor/three.min.js", "./vendor/supabase.js",
