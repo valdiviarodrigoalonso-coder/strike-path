@@ -1669,6 +1669,8 @@ function makeStage(host, opts = {}) {
   }
   const v0 = VIEW[opts.view || "3/4"];
   const cam = {az:v0[0], el:v0[1], dist:opts.dist || 3.3, taz:v0[0], tel:v0[1]};
+  // southpaw: the scene is mirrored across the fighter's centre line and the camera goes to the mirrored angle
+  let mirrored = false;
   let seq = buildSeq(["stance"]), i = 0, t0 = 0, from = resolve("stance"), playing = false, speed = 1, once = false, onDone = null, still = resolve("stance"), fromBag = BAG_X, bagX = BAG_X, stillBag = BAG_X;
   let running = false, paused = false, visible = false, raf = 0, lastDrag = -1e9, current = still;
   function resize() { const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
@@ -1677,7 +1679,7 @@ function makeStage(host, opts = {}) {
   host.addEventListener("pointerdown", e => { drag = {x:e.clientX, y:e.clientY, az:cam.taz, el:cam.tel}; try { host.setPointerCapture(e.pointerId); } catch (_) {} });
   host.addEventListener("pointermove", e => {
     if (!drag) return;
-    cam.taz = drag.az - (e.clientX - drag.x) * .45;
+    cam.taz = drag.az - (e.clientX - drag.x) * .45 * (mirrored ? -1 : 1);
     if (e.pointerType === "mouse") cam.tel = Math.max(-4, Math.min(80, drag.el + (e.clientY - drag.y) * .3));
     lastDrag = performance.now();
   });
@@ -1704,7 +1706,7 @@ function makeStage(host, opts = {}) {
     if (opts.sway && !drag && now - lastDrag > 5000) cam.taz = VIEW["3/4"][0] + Math.sin(now / 2600) * 32;
     cam.az += (cam.taz - cam.az) * .12; cam.el += (cam.tel - cam.el) * .12;
     const J = solve(current); fig.update(J); trails.feed(J); trails.draw();
-    placeCam(camera, cam.az, cam.el, cam.dist);
+    placeCam(camera, mirrored ? 180 - cam.az : cam.az, cam.el, cam.dist);
     renderer.render(scene, camera);
   }
   function loop(now) { if (!running) return; frame(now); raf = requestAnimationFrame(loop); }
@@ -1722,7 +1724,7 @@ function makeStage(host, opts = {}) {
     stop() { playing = false; still = current; },
     pose(name) { playing = false; still = resolve(name); stillBag = bagFor(name); trails.clear(); },
     speed(v) { speed = v; },
-    mirror(on) { root.scale.z = on ? -1 : 1; },
+    mirror(on) { mirrored = !!on; scene.scale.z = on ? -1 : 1; },
     guides(on) { fig.guides(on); if (hud) hud.hidden = !on; const lg = host.querySelector(".legend"); if (lg) lg.hidden = !on; },
     view(name) { const v = VIEW[name]; if (v) { cam.taz = v[0]; cam.tel = v[1]; lastDrag = performance.now(); } },
     pause(v) { paused = v; setRunning(visible); },
