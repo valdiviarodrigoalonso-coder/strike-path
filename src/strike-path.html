@@ -472,6 +472,23 @@ h1,h2,h3,.exhead b,.rotbtn b,.pvlist b,.plan b,.preset b,.theme b,.core .hd b,.c
 .exh .tgt{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
 .av{flex:none;width:42px;height:42px;border-radius:50%;background:#f2f2f7;color:#111;display:grid;place-items:center;font-size:13px;font-weight:800}
 .ex.complete .av{background:var(--green);color:#fff}
+.av.ph{padding:0;overflow:hidden;border:0;cursor:pointer;background:#f2f2f7}
+.av.ph img{width:100%;height:100%;object-fit:cover;display:block}
+span.av.ph{cursor:default}
+.ex.complete .av.ph{background:#f2f2f7;outline:3px solid var(--green);outline-offset:1px}
+.evframes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.evframes.one{grid-template-columns:1fr}
+.evframes figure{margin:0;display:flex;flex-direction:column;gap:4px}
+.evframes img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;background:var(--mat-2)}
+.evframes figcaption{font-size:12px;color:var(--muted);text-align:center}
+.credit{font-size:11px;color:var(--muted);margin:10px 0 0}
+.coreph{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.coreph img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px;background:var(--mat-2)}
+.cimg{width:76px;height:76px;border-radius:10px;object-fit:cover;flex:none;background:var(--mat-2)}
+.corestrip{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.corestrip span{display:flex;align-items:center;gap:10px;font-size:15px}
+.savecard{display:flex;flex-direction:column;gap:8px;margin-top:18px;background:rgba(47,140,246,.12)}
+.savecard b{font-size:17px}
 .restline{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
 .restline svg{width:16px;height:16px}
 .pills{display:flex;gap:8px;flex-wrap:wrap}
@@ -509,7 +526,7 @@ h1,h2,h3,.exhead b,.rotbtn b,.pvlist b,.plan b,.preset b,.theme b,.core .hd b,.c
 .ptr:nth-child(even){background:var(--mat);border-radius:8px}
 .ptr .w{color:var(--warm);font-weight:700}
 .sheet{border:0;border-radius:16px;background:var(--mat);color:var(--fg);padding:18px;width:min(460px,100% - 24px);max-height:85vh;overflow:auto}
-.sheet::backdrop{background:rgba(0,0,0,.6)}
+.sheet::backdrop,#acctDlg::backdrop{background:rgba(0,0,0,.6)}
 .sheet .chip{background:var(--mat-2)}
 .sheethd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
 .sheethd h3{font-size:19px;font-weight:700}
@@ -693,6 +710,7 @@ h1,h2,h3,.exhead b,.rotbtn b,.pvlist b,.plan b,.preset b,.theme b,.core .hd b,.c
     <div class="pghead"><h2>Profile</h2></div>
     <div class="pfhead"><div class="pfav" id="pfAv" aria-hidden="true">R</div><div><b id="pfRank">Rookie</b><span class="muted" id="pfXp" style="font-size:14px"></span>
       <div class="pfstats"><div><span>Workouts</span><b id="pfW">0</b></div><div><span>Streak</span><b id="pfS">0</b></div><div><span>Records</span><b id="pfR">0</b></div></div></div></div>
+    <div id="acctCard"></div>
     <div class="panel chartcard"><div class="hd"><b id="chTitle">0 hours this week</b><span class="muted" style="font-size:13px">Last 12 weeks</span></div><div class="vchart" id="chart"></div>
       <div class="segs" role="group" aria-label="Chart shows"><button class="seg" data-ch="dur">Duration</button><button class="seg" data-ch="vol">Volume</button><button class="seg" data-ch="reps">Reps</button></div></div>
     <span class="sub">This week</span>
@@ -764,6 +782,12 @@ h1,h2,h3,.exhead b,.rotbtn b,.pvlist b,.plan b,.preset b,.theme b,.core .hd b,.c
   </div>
 </dialog>
 
+<dialog class="sheet" id="exView" aria-labelledby="evName">
+  <div class="sheethd"><h3 id="evName">Exercise</h3><button class="linkbtn" id="evClose">Done</button></div>
+  <div class="evframes" id="evFrames"><figure><img id="ev0" alt=""><figcaption id="evCap0">Start</figcaption></figure><figure id="evFig1"><img id="ev1" alt=""><figcaption>Finish</figcaption></figure></div>
+  <p id="evTip" style="margin:12px 0 0"></p>
+  <p class="credit">Photos: free-exercise-db (public domain). Your gym's machines may look a little different.</p>
+</dialog>
 <nav class="tabbar" aria-label="Sections">
   <button class="tb" data-view="path" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Learn</span></button>
   <button class="tb" data-view="train" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><span>Train</span></button>
@@ -1798,8 +1822,8 @@ function renderFeed() {
   };
   $("feed").innerHTML = it.length ? it.slice(0, feedN).map(e => {
     if (e.k === "lift") {
-      const l = e.x, st = liftStats(l), rows = l.ex.map(x => { const n = x.sets.filter(s => s[2]).length; return '<li>' + avatar(x.n || x.id) + '<span>' + n + ' set' + (n === 1 ? "" : "s") + ' ' + esc(x.n || "Exercise") + '<\/span><\/li>'; });
-      if (l.core) rows.push('<li>' + avatar("Core Finisher") + '<span>' + l.core + ' rounds Fight core finisher<\/span><\/li>');
+      const l = e.x, st = liftStats(l), rows = l.ex.map(x => { const n = x.sets.filter(s => s[2]).length; return '<li>' + avatar(x.n || "Exercise", x.id) + '<span>' + n + ' set' + (n === 1 ? "" : "s") + ' ' + esc(x.n || "Exercise") + '<\/span><\/li>'; });
+      if (l.core) rows.push('<li>' + avatar("Ab wheel rollout", "") + '<span>' + l.core + ' rounds Fight core finisher<\/span><\/li>');
       return card("l" + e.o, cap(l.day), cap(l.day) + " day", l.d, [stat("Time", l.min ? fmtDur(l.min) : "–"), stat("Volume", Math.round(st.vol).toLocaleString() + " " + U()), stat("Sets", st.sets)].concat(l.pr ? [stat("Records", l.pr)] : []), rows);
     }
     if (e.k === "run") { const r = e.x; return card("r" + e.o, "Run", r.t + " run", r.d, [stat("Distance", r.km + " km"), stat("Time", fmtDur(r.min))].concat(r.km && r.min ? [stat("Pace", paceStr(r.min / r.km) + "/km")] : []).concat(r.rpe ? [stat("Effort", r.rpe + "/10")] : []), []); }
@@ -2151,6 +2175,9 @@ function paintCoreClock() {
   const st = coreSteps(), s = st[Math.min(coreT.step, st.length - 1)], left = coreT.run ? Math.max(0, Math.ceil((coreT.endAt - Date.now()) / 1000)) : CORE_WORK;
   box.className = "coreclock" + (coreT.run ? (s.work ? " work" : " rest") : "");
   const next = st[coreT.step + 1];
+  // the photo shows what to do now (or next, while resting), flipping between start and finish during work
+  const ci = $("coreImg"), cx = coreT.run ? (s.work || !next ? CORE[s.i] : CORE[next.i]) : CORE[0];
+  if (ci) { const src = photoSrc(photoKey("", cx.n), coreT.run && s.work ? Math.floor(Date.now() / 900) % 2 : 0); if (ci.getAttribute("src") !== src) ci.src = src; ci.alt = cx.n; }
   box.querySelector(".ct").textContent = left;
   box.querySelector(".cp b").textContent = coreT.run ? (s.work ? CORE[s.i].n : "Rest") : "Ready: " + CORE[0].n;
   box.querySelector(".cp small").textContent = coreT.run ? "Round " + (s.r + 1) + " of " + S.lifts.coreRounds + (s.work ? " · " + CORE[s.i].job : next ? " · next: " + CORE[next.i].n : "") : S.lifts.coreRounds + " rounds · 40 s on / 20 s off · Pallof and chops: switch sides halfway";
@@ -2179,8 +2206,8 @@ function renderCore() {
   const done = coreDone();
   box.innerHTML = '<div class="core' + (done ? " donec" : "") + '"><div class="hd"><b>Fight core finisher<\/b><span class="label">' + S.lifts.coreRounds + ' rounds ≈ ' + Math.round(S.lifts.coreRounds * 3) + ' min<\/span><\/div>' +
     '<span class="muted" style="font-size:14px">The three jobs your core does in a fight, from <a href="https://www.youtube.com/watch?v=qARYZULKz9Q" target="_blank" rel="noopener">How To Build A Core For Fighting<\/a> (Nermin Mehmedagic). Do it last, after your big lifts.<\/span>' +
-    CORE.map(c => '<div class="coreex"><span class="job">' + c.job + '<\/span><b>' + c.n + '<\/b><span class="tg2">' + c.sets + '<\/span><small>' + c.cue + '<\/small><\/div>').join("") +
-    '<div class="coreclock" id="coreClock"><span class="ct">40<\/span><span class="cp"><b><\/b><small class="muted"><\/small><\/span><\/div>' +
+    CORE.map(c => '<div class="coreex"><span class="job">' + c.job + '<\/span><b>' + c.n + '<\/b><span class="tg2">' + c.sets + '<\/span><small>' + c.cue + '<\/small><div class="coreph">' + [0, 1].map(fr => '<img src="' + photoSrc(photoKey("", c.n), fr) + '" alt="' + (fr ? "Finish" : "Start") + ' position: ' + esc(c.n) + '" loading="lazy">').join("") + '<\/div><\/div>').join("") +
+    '<div class="coreclock" id="coreClock"><img class="cimg" id="coreImg" alt=""><span class="ct">40<\/span><span class="cp"><b><\/b><small class="muted"><\/small><\/span><\/div>' +
     '<div class="row" style="justify-content:space-between"><div class="chips"><button class="chip" id="coreR3" aria-pressed="' + (S.lifts.coreRounds === 3) + '">3 rounds<\/button><button class="chip" id="coreR4" aria-pressed="' + (S.lifts.coreRounds === 4) + '">4 rounds<\/button><\/div>' +
     '<div class="row"><label class="row" style="gap:8px;cursor:pointer"><input class="tick" type="checkbox" id="coreTick"' + (done ? " checked" : "") + '><span>Done<\/span><\/label><button class="btn sm" id="coreGo">Start core circuit<\/button><\/div><\/div><\/div>';
   const setR = n => { if (coreT.run) return; S.lifts.coreRounds = n; persist(); renderLift(); };
@@ -2371,7 +2398,64 @@ const REST_OPTS = [15, 30, 45, 60, 75, 90, 105, 120, 150, 180, 210, 240, 300];
 const colsFor = ex => kindOf(ex) === "cardio" ? ["km", "Min"] : kindOf(ex) === "hold" ? ["", "Sec"] : [(ex.assist ? "-" : "") + U(), "Reps"];
 const prevStr = (ex, s) => { if (!s) return "–"; const k = kindOf(ex); if (k === "cardio") return (s[0] ? s[0] + " km in " : "") + s[1] + " min"; if (k === "hold") return s[1] + " s"; return (s[0] ? (ex.assist ? "-" : "") + s[0] + U() + " × " : "") + s[1]; };
 const initials = n => esc((n.replace(/[^A-Za-z ]/g, " ").trim().split(/\s+/).filter(w => w && !/^(and|the|of|with|or)$/i.test(w)).slice(0, 2).map(w => w[0]).join("") || "•").toUpperCase());
-const avatar = n => '<span class="av" aria-hidden="true">' + initials(n) + '<\/span>';
+// exercise photos: start (-0) and finish (-1) frames in img/ex, matched by exercise id, or by name for ones you add
+const PHOTO_BY_ID = {p_tm:"tread", l_tm:"tread", g_tm:"tread", p_bp:"bench", p_dip:"dip", p_fly:"fly", p_lat:"lat", p_pd:"pushdown", p_kb:"kickback",
+  l_pu:"pullup", l_row:"row", l_sap:"sap", l_rdf:"rdf", l_inc:"inccurl", l_shr:"shrug", l_rc:"revcurl", l_wc:"wristcurl", l_dh:"hang",
+  g_sq:"squat", g_rdl:"rdl", g_ht:"hipthrust", g_ext:"legext", g_cur:"legcurl", g_add:"adductor", g_calf:"calf"};
+const PHOTO_WORDS = [[/ab ?wheel|roll ?out|ab roller/i, "abwheel"], [/pallof/i, "pallof"], [/chop/i, "chop"], [/treadmill|jog|\brun\b/i, "tread"],
+  [/rear delt|reverse fl/i, "rdf"], [/wrist/i, "wristcurl"], [/reverse.*curl/i, "revcurl"], [/leg curl|hamstring curl/i, "legcurl"], [/curl/i, "inccurl"],
+  [/leg ext/i, "legext"], [/adduct/i, "adductor"], [/calf|calves/i, "calf"], [/hip thrust|glute bridge/i, "hipthrust"], [/romanian|rdl|deadlift/i, "rdl"], [/squat|leg press/i, "squat"],
+  [/hang/i, "hang"], [/shrug/i, "shrug"], [/straight.?arm|pullover/i, "sap"], [/row/i, "row"], [/pull.?up|chin.?up|pulldown/i, "pullup"],
+  [/kickback/i, "kickback"], [/pushdown|tricep|skull/i, "pushdown"], [/lateral|side raise/i, "lat"], [/fly|flye|pec|crossover/i, "fly"], [/dip/i, "dip"], [/bench|press/i, "bench"]];
+const ONE_FRAME = new Set(["hang"]);   // the dead hang is a hold: only the start frame applies
+const PHOTO_TIP = {
+  tread:"Easy pace for 5–8 minutes. You should be able to talk the whole time.",
+  bench:"Shoulder blades pinched, feet planted. Lower to mid-chest, then press up and slightly back.",
+  dip:"Lean forward a little for chest. Lower until your shoulders are just below your elbows.",
+  fly:"Soft bend in the elbows. Squeeze your chest to bring the handles together; control the way back.",
+  lat:"Lead with your elbows and raise to shoulder height. No swinging.",
+  pushdown:"Elbows pinned to your sides. Push down until your arms are straight, squeeze, come back slowly.",
+  kickback:"Upper arm parallel to the floor and still. Straighten the elbow fully, then lower with control.",
+  pullup:"Start from a full hang. Drive your elbows down toward your ribs until your chin clears the bar.",
+  row:"Chest tall. Pull to your belly button and squeeze your shoulder blades, then let them stretch forward.",
+  sap:"Arms nearly straight. Sweep the bar down to your thighs with your lats, not your triceps.",
+  rdf:"Hinge forward with a flat back. Open your arms wide like wings and squeeze the back of your shoulders.",
+  inccurl:"Lie back on an incline so your arms hang behind you. Curl without letting your elbows drift forward.",
+  shrug:"Lift your shoulders straight up toward your ears, pause, lower slowly. Don't roll them.",
+  revcurl:"Overhand grip, elbows still. This builds the forearms that keep your guard strong.",
+  wristcurl:"Bar behind you, palms facing back. Let it roll to your fingertips, then curl it up with your wrists.",
+  hang:"Straight arms, shoulders gently pulled down (not shrugged). Breathe and hold. Ignore the raised legs in the photo; just hang.",
+  squat:"Brace, sit down between your heels, knees over your toes. Go as deep as your back stays flat, then drive up.",
+  rdl:"Soft knees, push your hips back, slide the bar down your thighs. Stop when your hamstrings stretch.",
+  hipthrust:"Upper back on the bench, chin tucked. Drive through your heels and squeeze your glutes at the top.",
+  legext:"Pad on your lower shins. Straighten your legs fully, squeeze your quads, lower slowly.",
+  legcurl:"Pad just above your heels. Curl as far as you can, squeeze, and resist on the way back.",
+  adductor:"Sit tall. Squeeze your knees together with control; don't let the weight slam back.",
+  calf:"Balls of your feet on the edge. Full stretch at the bottom, then rise as high as you can.",
+  abwheel:"On your knees, glutes squeezed. Roll out only as far as your lower back stays flat, then pull back with your abs.",
+  pallof:"Stand side-on to the cable or band. Press straight out and hold; don't let it twist you.",
+  chop:"Pull diagonally across your body and turn your chest. Your core does the turning; your arms just hold. The photo uses a cable; a band works the same."
+};
+const photoKey = (id, n) => PHOTO_BY_ID[String(id || "").split("@")[0]] || (PHOTO_WORDS.find(w => w[0].test(n || "")) || [])[1] || "";
+const photoSrc = (k, fr) => "img/ex/" + k + "-" + (ONE_FRAME.has(k) ? 0 : fr) + ".jpg";
+const avatar = (n, id, tap) => {
+  const k = photoKey(id, n);
+  if (!k) return '<span class="av" aria-hidden="true">' + initials(n) + '<\/span>';
+  const img = '<img src="' + photoSrc(k, 0) + '" alt="" loading="lazy" decoding="async">';
+  return tap ? '<button class="av ph" data-photo="' + k + '" data-pname="' + esc(n) + '" aria-label="See how to do ' + esc(n) + '">' + img + '<\/button>' : '<span class="av ph" aria-hidden="true">' + img + '<\/span>';
+};
+function openPhoto(k, name) {
+  const one = ONE_FRAME.has(k), d = $("exView");
+  $("evName").textContent = name; $("evTip").textContent = PHOTO_TIP[k] || "";
+  $("ev0").src = photoSrc(k, 0); $("ev0").alt = (one ? "" : "Start position: ") + name;
+  $("ev1").src = photoSrc(k, 1); $("ev1").alt = "Finish position: " + name;
+  $("evFig1").hidden = one; $("evFrames").classList.toggle("one", one); $("evCap0").textContent = one ? "Hold this position" : "Start";
+  try { d.showModal(); } catch (e) { d.setAttribute("open", ""); }
+}
+// capture phase so tapping a photo never also triggers the card underneath it
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-photo]"); if (!b) return; e.preventDefault(); e.stopPropagation(); openPhoto(b.dataset.photo, b.dataset.pname); }, true);
+$("evClose").addEventListener("click", () => $("exView").close());
+$("exView").addEventListener("click", e => { if (e.target === $("exView")) $("exView").close(); });
 const lastNoteFor = id => { for (let i = S.lifts.logs.length - 1; i >= 0; i--) { const e = S.lifts.logs[i].ex.find(x => x.id === id && x.note); if (e) return e.note; } return ""; };
 const setVol = sets => sets.reduce((a, s) => a + (s[2] && !s[3] ? (+s[0] || 0) * (+s[1] || 0) : 0), 0);
 function openDay(d, edit) { liftDay = d; editMode = !!edit; wkScreen = "day"; renderLift(); scrollTo({top:0}); }
@@ -2421,13 +2505,14 @@ function renderPreview(prog) {
   list.innerHTML = '<button class="btn blue full" id="startW">Start Routine<\/button><p class="muted pvmeta">' + prog.length + ' exercises · about ' + (m.lift + m.warm + m.core) + ' min<\/p>' +
     prog.map(ex => {
       const k = kindOf(ex), c = colsFor(ex), sg = suggestion(ex), tags = tagsFor(ex, prog); let n = 0;
-      return '<div class="ex hv"><div class="exh">' + avatar(ex.n) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
+      return '<div class="ex hv"><div class="exh">' + avatar(ex.n, ex.id, true) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
         (k !== "cardio" ? '<div class="restline">' + ICON.clock + 'Rest Timer: ' + fmtRest(restFor(ex)) + '<\/div>' : '') +
         '<div class="ptbl"><div class="pth"><span>Set<\/span><span>' + c[0] + '<\/span><span>' + c[1] + '<\/span><\/div>' +
         rowsOf(ex).map(s => '<div class="ptr"><span' + (s[3] ? ' class="w">W' : '>' + (++n)) + '<\/span><span>' + (k === "hold" ? "" : s[0] === "" ? "–" : s[0]) + '<\/span><span>' + s[1] + '<\/span><\/div>').join("") + '<\/div>' +
         '<div class="sugg2">' + esc(sg.note) + '<\/div><\/div>';
     }).join("") +
-    '<div class="ex hv"><div class="exh">' + avatar("Core Finisher") + '<div class="exn"><b>Fight core finisher<\/b><\/div><span class="tgt">' + S.lifts.coreRounds + ' rounds · ' + m.core + ' min<\/span><\/div><div class="sugg2">Ab wheel, Pallof press and banded chops: 40 s on, 20 s off, at the end of the workout.<\/div><\/div>' +
+    '<div class="ex hv"><div class="exh"><div class="exn"><b>Fight core finisher<\/b><\/div><span class="tgt">' + S.lifts.coreRounds + ' rounds · ' + m.core + ' min<\/span><\/div><div class="sugg2">40 s on, 20 s off, at the end of the workout. Tap a photo to see the movement.<\/div>' +
+      '<div class="corestrip">' + CORE.map(c => '<span>' + avatar(c.n, "", true) + esc(c.n) + '<\/span>').join("") + '<\/div><\/div>' +
     '<button class="btn ghost full" id="editW2" style="margin-top:14px">Edit Routine<\/button>';
   $("startW").addEventListener("click", startWorkout);
   $("editW2").addEventListener("click", () => { editMode = true; renderLift(); scrollTo({top:0}); });
@@ -2536,7 +2621,7 @@ function renderLift() {
         '<input type="number" inputmode="numeric" step="1" min="0" id="r-' + sid(i) + '" data-i="' + i + '" data-f="1" value="' + s[1] + '" aria-label="' + (kind === "cardio" ? "Minutes" : kind === "hold" ? "Seconds" : "Set " + (i + 1) + " reps") + '">' +
         '<input class="ck" type="checkbox" id="d-' + sid(i) + '" data-i="' + i + '" aria-label="Set ' + (i + 1) + ' done"' + (s[2] ? " checked" : "") + '><\/div>';
     }).join("");
-    card.innerHTML = '<div class="exh">' + avatar(ex.n) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
+    card.innerHTML = '<div class="exh">' + avatar(ex.n, ex.id, true) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
       '<div class="pills">' + (kind === "cardio" ? '' : '<label class="pill">' + ICON.clock + '<select aria-label="Rest timer for ' + esc(ex.n) + '">' + ropts.map(v => '<option value="' + v + '"' + (v === rs ? " selected" : "") + '>Rest: ' + fmtRest(v) + '<\/option>').join("") + '<\/select><\/label>') +
         '<button class="pill" data-note aria-pressed="' + noteOpen + '">' + ICON.note + 'Note<\/button><\/div>' +
       '<textarea class="exnote" data-nid="' + esc(id) + '" maxlength="300" aria-label="Note for ' + esc(ex.n) + '" placeholder="' + esc(lastNote ? "Last time: " + lastNote : "Add a note for this exercise") + '"' + (noteOpen ? "" : " hidden") + '>' + esc(notes[id] || "") + '<\/textarea>' +

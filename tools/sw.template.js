@@ -3,7 +3,7 @@ const VERSION = "__VERSION__";
 const CACHE = "strikepath-" + VERSION;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./config.js", "./sync.js",
   "./vendor/three.min.js", "./vendor/supabase.js",
-  "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"];
+  "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"].concat(__PHOTOS__);
 
 self.addEventListener("install", e => {
   // cache: "reload" skips the browser's HTTP cache (GitHub Pages allows 10 minutes), so a new version caches new files

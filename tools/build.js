@@ -33,5 +33,7 @@ swap("</body>",
 
 fs.writeFileSync(path.join(root, "index.html"), html);
 const version = crypto.createHash("sha1").update(html + fs.readFileSync(path.join(root, "sync.js")) + fs.readFileSync(path.join(root, "config.js"))).digest("hex").slice(0, 10);
-fs.writeFileSync(path.join(root, "sw.js"), fs.readFileSync(path.join(__dirname, "sw.template.js"), "utf8").replace("__VERSION__", version));
+// exercise photos are cached on install too, so they show at the gym with no signal
+const photos = fs.readdirSync(path.join(root, "img", "ex")).filter(f => f.endsWith(".jpg")).sort().map(f => "./img/ex/" + f);
+fs.writeFileSync(path.join(root, "sw.js"), fs.readFileSync(path.join(__dirname, "sw.template.js"), "utf8").replace("__VERSION__", version).replace("__PHOTOS__", JSON.stringify(photos)));
 console.log("built index.html and sw.js (cache " + version + ")");

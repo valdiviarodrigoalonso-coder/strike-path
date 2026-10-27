@@ -16,6 +16,7 @@ It installs on your phone like an app, works offline, and syncs between devices 
 | `manifest.webmanifest`, `icons/` | What makes it installable, with its home-screen icon |
 | `vendor/` | Local copies of three.js (r128) and supabase-js (2.45.4) so it works offline |
 | `supabase/schema.sql` | The database table and privacy rules |
+| `img/ex/` | Exercise photos, start (`-0`) and finish (`-1`), from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (public domain) |
 
 Your data is saved on the device first, every time. When you're signed in and online it also saves to your account;
 offline changes upload when the connection comes back. The newer copy wins.
@@ -27,9 +28,11 @@ offline changes upload when the connection comes back. The newer copy wins.
 2. In the project: **SQL Editor → New query**, paste everything from `supabase/schema.sql`, and click **Run**.
    Do the same with `supabase/transfer.sql` to turn on short transfer codes.
 3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into `config.js`.
-4. **Authentication → Providers → Email**: either keep "Confirm email" on (you'll click a link the first time you sign up),
-   or turn it off for the quickest setup since it's just for you.
-5. **Authentication → URL Configuration**: set **Site URL** to the address where you host the app (step 2 below).
+4. **Authentication → Sign In / Providers → Email**: turn **Confirm email** off. Then "Create account" signs you in
+   straight away. With it on, every new account has to click an emailed link first, and Supabase's free mailer only
+   sends a few emails an hour.
+5. **Authentication → URL Configuration**: set **Site URL** to the address where you host the app (step 2 below),
+   and add the same address under **Redirect URLs**, so email links (confirmations, password resets) open the app.
 
 ### 2. Free hosting (GitHub Pages)
 1. Run `node tools/build.js`.
@@ -41,7 +44,8 @@ offline changes upload when the connection comes back. The newer copy wins.
 - **iPhone (Safari):** open the address → Share → **Add to Home Screen**.
 - **Android (Chrome):** open the address → menu → **Install app**.
 
-Then tap **Sign in to sync** (under your rank) and create your account. Use the same account on your computer.
+Then tap **Save my progress** (under your rank, or on the Profile tab) and create your account. Use the same account on your computer.
+Forgot your password? Tap **Sign in → Forgot password?** and the emailed link lets you pick a new one.
 
 ### Moving your progress
 - **Between devices running the app:** sign in to sync on both. Or, without an account, use a short code:
