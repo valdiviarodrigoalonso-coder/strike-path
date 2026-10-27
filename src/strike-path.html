@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Strike Path</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap&text=%E3%83%89%E3%83%B3!%E3%83%90%E3%82%B7%E3%83%83%E3%82%AD%E3%83%A5%E3%83%93%E3%82%BA%E3%83%BC%E3%82%B4">
 <style>
 /* Layout: fight-night poster. Sticky scoreboard header, ring-mat hero with a live 3D fighter, belt-by-belt path, fight camp timer, iron room. Single committed dark look. */
 :root{
@@ -598,6 +602,64 @@ body{padding-top:env(safe-area-inset-top,0px)}
 .cbpick .chips .chip{background:var(--mat-2)}
 #trSheet .settings{gap:14px}
 #trSheet .chip{background:var(--mat-2)}
+/* ===== Train: boxing-manga flair (ink, screentone, speed lines, sound effects) ===== */
+:root{--manga:"Bangers",Impact,"Arial Black",sans-serif;--kana:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;--paper:#f4efe3;--ippo:#7cc4ff}
+#view-train .trhero{position:relative;overflow:hidden;align-items:flex-end;margin:16px 4px 8px;padding:22px 18px 18px;border:3px solid var(--paper);border-radius:6px;transform:rotate(-.6deg);box-shadow:6px 6px 0 var(--red);
+  background:radial-gradient(circle,rgba(255,255,255,.13) 1.3px,transparent 1.7px) 0 0/9px 9px,repeating-conic-gradient(from 0deg at 88% 20%,rgba(255,255,255,.06) 0 1.5deg,transparent 1.5deg 7deg),linear-gradient(135deg,#1c2033,#000)}
+#view-train .trhero h2{font-family:var(--manga);font-weight:400;font-size:56px;letter-spacing:.03em;line-height:.9;color:var(--paper);text-shadow:3px 3px 0 var(--red);transform:skewX(-6deg)}
+#view-train .trhero p{margin:6px 0 0;color:#c9c3b6;font-size:14px}
+#view-train .trhero .kana{position:absolute;right:54px;top:-4px;font-family:var(--kana);font-size:70px;color:rgba(255,210,63,.2);transform:rotate(12deg);pointer-events:none;white-space:nowrap}
+#view-train .sub{font-family:var(--manga);font-size:25px;font-weight:400;letter-spacing:.05em;color:var(--paper);display:inline-block;border-bottom:3px solid var(--red);padding-bottom:1px;margin-top:30px;transform:skewX(-6deg)}
+#view-train .routines{gap:20px;padding:0 6px 6px 2px}
+#view-train .rcard{background:#111 radial-gradient(circle,rgba(255,255,255,.07) 1.1px,transparent 1.5px) 0 0/8px 8px;border:3px solid var(--paper);border-radius:4px;box-shadow:6px 6px 0 var(--red);transform:rotate(-.4deg)}
+#view-train .rcard:nth-child(3n+2){box-shadow:6px 6px 0 var(--ippo);transform:rotate(.4deg)}
+#view-train .rcard:nth-child(3n){box-shadow:6px 6px 0 var(--gold)}
+#view-train .rtitle{font-family:var(--manga);font-weight:400;font-size:29px;letter-spacing:.04em;color:var(--paper)}
+#view-train .rthemes span{background:var(--paper);color:#111;border-radius:3px;transform:skewX(-8deg);font-weight:700}
+#view-train .nx{background:var(--gold);color:#111;border-radius:3px}
+#view-train .btn.blue{background:var(--gold);color:#111;font-family:var(--manga);font-weight:400;font-size:22px;letter-spacing:.07em;border:2px solid #000;border-radius:4px;box-shadow:3px 3px 0 #000;transform:skewX(-6deg)}
+#view-train .btn.blue:hover{background:#ffde5c}
+#view-train .btn.ghost{border:2px solid var(--paper);border-radius:4px}
+#view-train .panel{border:3px solid var(--paper);border-radius:4px;background:#111}
+#view-train .bars .b i{background:var(--red)}
+#trPlanName{font-family:var(--manga);font-weight:400;font-size:36px!important;letter-spacing:.04em;transform:skewX(-6deg)}
+#trRounds li{border-bottom:2px dashed #2a2a2e}
+#trRounds li .n{font-family:var(--manga);font-weight:400;font-size:21px;background:var(--red);color:#fff;border-radius:3px;transform:skewX(-8deg)}
+#trRounds li b{font-family:var(--manga);font-weight:400;font-size:22px;letter-spacing:.04em}
+/* live: speed lines while you fight, screentone while you rest or get ready */
+#trLive .clock{border:3px solid var(--paper);border-radius:6px;background:#0b0b0d}
+#trLive .clock.fight{border-color:var(--red)}#trLive .clock.rest{border-color:var(--ippo)}#trLive .clock.ready{border-color:var(--gold)}
+#trLive .clock::before{content:"";position:absolute;inset:-60%;z-index:0;pointer-events:none;opacity:0;transition:opacity .4s}
+#trLive .clock.fight::before{opacity:1;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.075) 0 1deg,transparent 1deg 5deg);animation:speed 1.2s steps(3) infinite}
+#trLive .clock.rest::before{opacity:1;background:radial-gradient(circle,rgba(124,196,255,.16) 1.4px,transparent 1.8px) 0 0/10px 10px}
+#trLive .clock.ready::before{opacity:1;background:radial-gradient(circle,rgba(255,210,63,.14) 1.4px,transparent 1.8px) 0 0/10px 10px}
+@keyframes speed{to{transform:rotate(6deg)}}
+#trLive .clock > *{position:relative;z-index:1}
+#trLive .time{font-family:var(--manga);font-weight:400;font-size:clamp(100px,30vw,170px);letter-spacing:.03em;color:var(--paper);text-shadow:5px 5px 0 #000,8px 8px 0 var(--red);transform:skewX(-5deg);line-height:.95}
+#trLive .clock.rest .time{text-shadow:5px 5px 0 #000,8px 8px 0 var(--ippo)}
+#trLive .clock.burn .time{color:var(--red);text-shadow:5px 5px 0 #000,8px 8px 0 var(--gold)}
+#trLive .phase{font-family:var(--manga);font-weight:400;font-size:36px;letter-spacing:.07em;transform:skewX(-8deg);-webkit-text-stroke:1px #000}
+#trLive .clock.fight .phase{color:var(--gold)}
+#trLive .theme{border-left-color:var(--red)}
+#trLive .theme b{font-family:var(--manga);font-weight:400;font-size:26px;letter-spacing:.05em}
+#trLive .callout{min-height:64px}
+#trLive .callout .c{font-family:var(--manga);font-weight:400;font-size:clamp(26px,7vw,36px);letter-spacing:.05em;background:var(--gold);color:#111;border:0;border-radius:0;padding:12px 18px 13px;
+  clip-path:polygon(0 12%,8% 0,22% 10%,38% 0,52% 9%,68% 0,82% 8%,100% 0,94% 30%,100% 52%,92% 72%,100% 100%,78% 92%,60% 100%,44% 90%,26% 100%,10% 90%,0 100%,5% 66%,0 44%,6% 26%)}
+#trLive .callout .c.k{background:var(--red);color:#fff}
+#trLive .callout .c.d{background:var(--ippo);color:#111}
+#trLive .callout .c.f{background:var(--green);color:#111}
+#trLive .callout .c small{color:inherit;font-family:var(--body)}
+#trLive .callout .msg{font-family:var(--manga);font-weight:400;letter-spacing:.05em;color:var(--paper)}
+#trLive .callout .go{font-family:var(--manga);font-weight:400;color:var(--gold);text-shadow:4px 4px 0 var(--red);-webkit-text-stroke:2px #000}
+#trLive .nextc b{font-family:var(--manga);font-weight:400;font-size:18px;letter-spacing:.05em;color:var(--paper)}
+#trLive .rdots i{border-radius:2px;transform:skewX(-12deg);width:16px}
+#trLive .rbar{height:9px;border-radius:0;border:2px solid #000;background:#222}
+.sfxlayer{position:absolute!important;inset:0;z-index:3!important;pointer-events:none;overflow:hidden}
+.sfx{position:absolute;font-family:var(--kana);font-size:clamp(44px,13vw,72px);color:var(--gold);-webkit-text-stroke:2px #000;text-shadow:4px 4px 0 var(--red);white-space:nowrap;opacity:0;transform:rotate(var(--r,0deg)) scale(.4);animation:sfx .75s cubic-bezier(.2,1.6,.4,1) forwards}
+.sfx.en{font-family:var(--manga);font-size:clamp(70px,22vw,120px);color:var(--paper);text-shadow:6px 6px 0 var(--red)}
+@keyframes sfx{0%{opacity:0;transform:rotate(var(--r)) scale(.4)}25%{opacity:1;transform:rotate(var(--r)) scale(1.15)}70%{opacity:1;transform:rotate(var(--r)) scale(1)}100%{opacity:0;transform:rotate(var(--r)) scale(1.05)}}
+#trLive .clock.burn::after{content:"ゴゴゴゴ";position:absolute;right:8px;top:30%;z-index:2;font-family:var(--kana);font-size:38px;color:rgba(232,64,47,.6);writing-mode:vertical-rl;pointer-events:none;animation:menace .25s steps(2) infinite}
+@keyframes menace{50%{transform:translate(2px,-2px)}}
 @media (max-width:420px){.sth,.str{grid-template-columns:26px minmax(0,1fr) 62px 52px 36px;gap:6px}.pfstats{gap:16px}}
 </style>
 </head>
@@ -670,7 +732,7 @@ body{padding-top:env(safe-area-inset-top,0px)}
   <!-- TRAIN -->
   <section id="view-train" role="tabpanel" aria-labelledby="tab-train" hidden>
     <div id="trHome">
-      <div class="pghead"><h2>Bag Work</h2><button class="roundbtn" id="trSet" aria-label="Bag work settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button></div>
+      <div class="pghead trhero"><div><span class="kana" aria-hidden="true">ドン!</span><h2>Bag Work</h2><p>Hit it until your fists remember.</p></div><button class="roundbtn" id="trSet" aria-label="Bag work settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button></div>
       <div id="trResume"></div>
       <span class="sub">Workouts</span>
       <div class="routines" id="trCards"></div>
@@ -703,6 +765,7 @@ body{padding-top:env(safe-area-inset-top,0px)}
         <div class="theme" id="theme"><b id="themeName">Mix</b><span id="themeDesc"></span></div>
         <div class="time" id="time">2:00</div>
         <div class="rbar" aria-hidden="true"><i id="rbar"></i></div>
+        <div class="sfxlayer" id="sfx" aria-hidden="true"></div>
         <div class="callout" id="callout" aria-live="polite"><span class="msg">Press start, then get in stance</span></div>
         <div class="nextc" id="nextC"></div>
         <div class="stage3d" id="trainStage"><span class="hint">Drag to rotate</span></div>
@@ -1758,8 +1821,8 @@ const OPT = {
   rest:{vals:[30, 45, 60, 90, 120], lbl:v => v + " s", def:30},
   pace:{vals:[7, 5, 3.5, 2.5, 1.6], lbl:v => ({7:"Easy", 5:"Steady", 3.5:"Fast", 2.5:"Fighter", 1.6:"Max"})[v], def:5}
 };
-const EXTRAS = {voice:"Coach voice", ready:"10s get-ready", warn:"10s warning", burn:"Burnout finish", foot:"Footwork cues", quiet:"Quiet alerts"};
-const T = {preset:"quick", voice:true, ready:true, warn:true, burn:false, foot:false, quiet:false};
+const EXTRAS = {voice:"Coach voice", lock:"Lock-screen coach", ready:"10s get-ready", warn:"10s warning", burn:"Burnout finish", foot:"Footwork cues", quiet:"Quiet alerts"};
+const T = {preset:"quick", voice:true, lock:true, ready:true, warn:true, burn:false, foot:false, quiet:false};
 for (const k in OPT) T[k] = OPT[k].def;
 try {
   const sv = JSON.parse(localStorage.getItem("strikepath.timer2") || "{}") || {};
@@ -2076,7 +2139,9 @@ function nextCombo(theme) {
   return c;
 }
 const trainStage = makeStage($("trainStage"), {view:"3/4"});
-const clock = {phase:"idle", round:1, left:0, endAt:0, timer:0, nextCall:0, paused:false, warned:false, burning:false, strikes:0, combos:0, done:0, saved:false, lastBeep:0, perRound:[], queued:null, lastCombo:null, ladder:null, drill:null};
+// plan: the whole workout worked out at Start ({segs, ev, total}); the clock reads time from the audio track when there is one
+const clock = {phase:"idle", round:1, left:0, timer:0, paused:false, burning:false, strikes:0, combos:0, done:0, saved:false, perRound:[], queued:null, lastCombo:null, ladder:null, drill:null,
+  plan:null, ei:0, seg:null, t0:0, pausedAt:0, audio:null, url:"", starting:false};
 let audio = null;
 function ac() { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === "suspended") audio.resume(); } catch (e) {} return audio; }
 // quiet alerts (Workouts rest-sound setting) replace the loud bell and clap when "Quiet alerts" is on
@@ -2137,35 +2202,146 @@ function paintClock() {
 function resetClock() {
   clearInterval(clock.timer);
   if (clock.done && !clock.saved) saveSession();
-  Object.assign(clock, {phase:"idle", round:1, left:T.len, paused:false, warned:false, burning:false, strikes:0, combos:0, done:0, saved:false, lastBeep:0, perRound:[], queued:null, lastCombo:null, ladder:null, drill:null});
+  if (clock.audio) { try { clock.audio.pause(); } catch (e) {} }
+  if (clock.url) URL.revokeObjectURL(clock.url);
+  keepAwake(false);
+  Object.assign(clock, {phase:"idle", round:1, left:T.len, paused:false, burning:false, strikes:0, combos:0, done:0, saved:false, perRound:[], queued:null, lastCombo:null, ladder:null, drill:null, plan:null, ei:0, seg:null, audio:null, url:"", pausedAt:0});
+  try { speechSynthesis.cancel(); } catch (e) {}
+  try { if ("mediaSession" in navigator) navigator.mediaSession.metadata = null; } catch (e) {}
   $("nextC").textContent = "";
   setCallMsg("Press start, then get in stance"); trainStage.pose("stance"); $("summary").hidden = true; paintClock();
 }
-function call() {
-  const theme = themeFor(clock.round), paceF = T.pace / 5;
-  clock.perRound[clock.round - 1] = (clock.perRound[clock.round - 1] || 0) + 1; clock.combos++;
-  if (theme === "reaction") {
-    // reaction rounds: no words, just a sharp beep at an unpredictable moment
-    beep(990); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
-    $("callout").innerHTML = '<span class="go">GO!<\/span>'; $("nextC").textContent = "Any combo, then reset your stance and bounce.";
-    const c = makeCombo("speed"); clock.lastCombo = c; clock.strikes += c.filter(id => !DEF.includes(id)).length;
-    const frames = []; c.forEach((id, i) => { if (i) frames.push("stance"); frames.push(...MOVE_BY_ID[id].frames.filter(f => f !== "stance")); });
-    trainStage.load(frames, {once:true, force:true});
-    clock.nextCall = Date.now() + (2 + Math.random() * 3.5) * Math.max(.6, paceF) * 1000;
-    return;
+// manga sound effects: a hit for punches, a heavier one when the combo has a kick
+const SFX_HIT = ["バシッ!", "ドン!", "バキッ!", "シュッ!", "ビシッ!"], SFX_KICK = ["ズドン!", "バシーン!", "ドゴッ!"];
+function popSfx(text, cls) {
+  const L = $("sfx"); if (!L) return;
+  const s = document.createElement("span"); s.className = "sfx" + (cls ? " " + cls : ""); s.textContent = text;
+  s.style.left = (cls ? 10 : 6 + Math.random() * 46) + "%"; s.style.top = (cls ? 26 : 16 + Math.random() * 30) + "%";
+  s.style.setProperty("--r", (Math.random() * 24 - 12).toFixed(1) + "deg");
+  L.appendChild(s); setTimeout(() => s.remove(), 800);
+}
+// ---- the workout plan: every bell, beep, call and warning, worked out when you press Start ----
+const ROUNDW = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"].map(w => "Round " + w);
+const NUMWORD = {"1":"One", "2":"Two", "3":"Three", "6":"Six"};
+const clipFor = id => isFoot(id) ? FOOT[id] : T.calls === "numbers" && NUM[id] ? NUMWORD[NUM[id]] : MOVE_BY_ID[id].call;
+function buildPlan() {
+  const segs = [], ev = [], add = (t, type, o) => ev.push(Object.assign({t, type}, o || {}));
+  const keep = clock.round; let t = 0;
+  if (T.ready) { segs.push({k:"ready", round:1, s:0, e:10}); add(0, "say", {w:["Get ready"]}); [7, 8, 9].forEach(x => add(x, "beep", {f:660})); t = 10; }
+  for (let r = 1; r <= T.rounds; r++) {
+    clock.round = r; clock.ladder = null; clock.drill = null;
+    const theme = themeFor(r), th = THEMES[theme], s = t, e = t + T.len, stopAt = Math.min(T.burn ? e - 20 : e, e - 3);
+    segs.push({k:"fight", round:r, s, e});
+    add(s, "bell", {n:1}); add(s + .4, "say", {w:[ROUNDW[r - 1] || "Round", th.name, "Fight!"]});
+    let ct = s + 2.2;
+    while (ct < stopAt) {
+      if (theme === "reaction") { add(ct, "react", {ids:makeCombo("speed")}); ct += (.8 + Math.random() * 3) * Math.max(.6, T.pace / 5); continue; }
+      const c = nextCombo(theme); add(ct, "combo", {ids:c});
+      ct += Math.max(.9, T.pace * th.pace + c.length * .75 - 1.5);   // 1.5 s quicker than before, never under 0.9 s
+    }
+    if (T.burn) add(e - 20, "burn", {kicks:theme === "kicks" && callable().includes("teep")});
+    if (T.warn) add(e - 10, "warn");
+    add(e, "bell", {n:r < T.rounds ? 1 : 3}); add(e, "roundEnd", {round:r});
+    if (r < T.rounds) { segs.push({k:"rest", round:r + 1, s:e, e:e + T.rest}); add(e + .9, "say", {w:["Rest.", "Next up", THEMES[themeFor(r + 1)].name, "round"]}); t = e + T.rest; }
+    else { add(e + 1.1, "say", {w:["Time! Great work."], tail:true}); t = e; }
   }
-  const c = clock.queued && clock.queuedRound === clock.round ? clock.queued : nextCombo(theme);
-  clock.queued = nextCombo(theme); clock.queuedRound = clock.round;
-  const strikes = c.filter(id => !isFoot(id));
-  clock.lastCombo = strikes;
-  $("callout").innerHTML = c.map((id, i) => '<span class="c ' + chipCls(id) + '" style="animation-delay:' + (i * 70) + 'ms">' + (T.calls === "numbers" && NUM[id] ? '<b>' + NUM[id] + '<\/b><small>' + esc(MOVE_BY_ID[id].call) + '<\/small>' : esc(callWord(id))) + '<\/span>').join("");
-  $("nextC").innerHTML = 'Next: <b>' + clock.queued.map(id => esc(callWord(id))).join(T.calls === "numbers" ? "-" : ", ") + '<\/b>';
-  say(c.map(callWord).join(", "));
+  clock.round = keep; clock.ladder = null; clock.drill = null;
+  ev.sort((a, b) => a.t - b.t);
+  return {segs, ev, total:t};
+}
+const segAt = t => { for (const s of clock.plan.segs) if (t >= s.s && t < s.e) return s; return null; };
+const elapsed = () => clock.paused ? clock.pausedAt : clock.audio ? clock.audio.currentTime : (Date.now() - clock.t0) / 1000;
+// stale = an event that passed while the phone was locked or the screen was away: count it, but don't play it late
+function fire(e, stale) {
+  const sound = !clock.audio && !stale;
+  if (e.type === "beep") { if (sound) beep(e.f); }
+  else if (e.type === "bell") { if (sound) ring(e.n); }
+  else if (e.type === "warn") { if (sound) { if (T.quiet) notify("warn"); else clap(2); } }
+  else if (e.type === "say") { if (sound && !e.tail) say(e.w.join(", ")); }
+  else if (e.type === "combo" || e.type === "react") showCombo(e, stale, sound);
+  else if (e.type === "burn") {
+    clock.burning = true; clock.strikes += 44;
+    setCallMsg("Burnout! Nonstop " + (e.kicks ? "teeps" : "jab-cross") + " to the bell"); $("nextC").textContent = "";
+    if (!stale) trainStage.load(e.kicks ? ["chamberL", "teep"] : ["jab", "cross"], {force:true});
+    if (sound) say("Burnout! Go go go!");
+  } else if (e.type === "roundEnd") {
+    const before = snapshot();
+    S.rounds++; clock.done++; markToday(); persist(); renderHUD(); renderHero(); renderTrophies();
+    toast("+10 XP · Round " + e.round + " done", "xp"); celebrate(before);
+  }
+}
+function showCombo(e, stale, sound) {
+  clock.combos++; clock.perRound[clock.round - 1] = (clock.perRound[clock.round - 1] || 0) + 1;
+  const strikes = e.ids.filter(id => !isFoot(id));
+  clock.strikes += strikes.filter(id => !DEF.includes(id)).length; clock.lastCombo = strikes;
+  if (stale) return;
+  if (e.type === "react") {
+    if (sound) beep(990); try { navigator.vibrate && navigator.vibrate(60); } catch (x) {}
+    $("callout").innerHTML = '<span class="go">GO!<\/span>'; $("nextC").textContent = "Any combo, then reset your stance and bounce."; popSfx(pick(SFX_HIT));
+  } else {
+    $("callout").innerHTML = e.ids.map((id, i) => '<span class="c ' + chipCls(id) + '" style="animation-delay:' + (i * 70) + 'ms">' + (T.calls === "numbers" && NUM[id] ? '<b>' + NUM[id] + '<\/b><small>' + esc(MOVE_BY_ID[id].call) + '<\/small>' : esc(callWord(id))) + '<\/span>').join("");
+    let nx = null; for (let i = clock.ei; i < clock.plan.ev.length; i++) { const x = clock.plan.ev[i]; if (x.type === "combo") { nx = x; break; } if (x.type === "roundEnd" || x.type === "burn") break; }
+    $("nextC").innerHTML = nx ? 'Next: <b>' + nx.ids.map(id => esc(callWord(id))).join(T.calls === "numbers" ? "-" : ", ") + '<\/b>' : "";
+    if (sound) say(e.ids.map(callWord).join(", "));
+    if (strikes.length) popSfx(pick(strikes.some(id => KICK.includes(id)) ? SFX_KICK : SFX_HIT));
+  }
   const frames = []; strikes.forEach((id, i) => { if (i) frames.push("stance"); frames.push(...MOVE_BY_ID[id].frames.filter(f => f !== "stance")); });
   if (frames.length) trainStage.load(frames, {once:true, force:true});
-  clock.strikes += strikes.filter(id => !DEF.includes(id)).length;
-  clock.nextCall = Date.now() + (T.pace * THEMES[theme].pace + c.length * .75) * 1000;
 }
+
+// ---- the coach's voice: short recorded clips (audio/coach.wav, offsets in audio/coach.json) ----
+let coachBank = null;
+async function loadCoach() {
+  if (coachBank) return coachBank;
+  const [meta, buf] = await Promise.all([fetch("audio/coach.json").then(r => r.json()), fetch("audio/coach.wav").then(r => r.arrayBuffer())]);
+  const dv = new DataView(buf); let o = 12, data = 0, len = 0;
+  while (o + 8 <= dv.byteLength) { const id = String.fromCharCode(dv.getUint8(o), dv.getUint8(o + 1), dv.getUint8(o + 2), dv.getUint8(o + 3)), n = dv.getUint32(o + 4, true); if (id === "data") { data = o + 8; len = n; break; } o += 8 + n + (n & 1); }
+  if (!data) throw new Error("coach audio unreadable");
+  return (coachBank = {rate:meta.rate, clips:meta.clips, pcm:new Int16Array(buf.slice(data, data + len))});
+}
+const wavURL = (pcm, rate) => {
+  const hd = new DataView(new ArrayBuffer(44)), str = (o, s) => { for (let i = 0; i < s.length; i++) hd.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, "RIFF"); hd.setUint32(4, 36 + pcm.length * 2, true); str(8, "WAVE"); str(12, "fmt "); hd.setUint32(16, 16, true); hd.setUint16(20, 1, true); hd.setUint16(22, 1, true);
+  hd.setUint32(24, rate, true); hd.setUint32(28, rate * 2, true); hd.setUint16(32, 2, true); hd.setUint16(34, 16, true); str(36, "data"); hd.setUint32(40, pcm.length * 2, true);
+  return URL.createObjectURL(new Blob([hd.buffer, pcm.buffer], {type:"audio/wav"}));
+};
+// mix the plan into one track: same sounds as the live timer, plus the coach's voice from the clips
+function renderTrack(P, bank) {
+  const R = bank.rate, N = Math.ceil((P.total + 3.5) * R), out = new Int16Array(N);
+  const mix = (i, v) => { if (i < 0 || i >= N) return; const s = out[i] + v; out[i] = s > 32767 ? 32767 : s < -32768 ? -32768 : s; };
+  const tone = (t, f, len, vol, sq) => { const i0 = Math.round(t * R), n = Math.round(len * R); for (let i = 0; i < n; i++) { const x = i / R, w = Math.sin(2 * Math.PI * f * x); mix(i0 + i, (sq ? Math.sign(w) : w) * Math.min(1, x / .01) * Math.exp(-x * 5 / len) * vol * 32767); } };
+  const noise = (t, len, vol) => { const i0 = Math.round(t * R), n = Math.round(len * R); for (let i = 0; i < n; i++) mix(i0 + i, (Math.random() * 2 - 1) * Math.pow(1 - i / n, 4) * vol * 32767); };
+  const voice = (t, words) => { let i0 = Math.round(t * R); words.forEach(w => { const c = bank.clips[w]; if (!c) return; for (let i = 0; i < c[1]; i++) mix(i0 + i, bank.pcm[c[0] + i] * .9); i0 += c[1] + Math.round(.05 * R); }); };
+  const bell = (t, n) => { for (let k = 0; k < n; k++) { if (T.quiet) { tone(t + k * .4, 660, .5, .22); tone(t + k * .4 + .18, 880, .55, .22); } else { tone(t + k * .32, 880, 1.1, .4); tone(t + k * .32, 1320, 1.1, .16); } } };
+  P.ev.forEach(e => {
+    if (e.type === "beep") tone(e.t, e.f, .18, .35);
+    else if (e.type === "bell") bell(e.t, e.n);
+    else if (e.type === "warn") { if (T.quiet) { tone(e.t, 520, .2, .25); tone(e.t + .25, 520, .2, .25); } else { noise(e.t, .09, .5); noise(e.t + .22, .09, .5); } if (T.voice) voice(e.t + .5, ["Ten seconds"]); }
+    else if (e.type === "react") tone(e.t, 990, .18, .5);
+    else if (e.type === "burn") { if (T.voice) voice(e.t, ["Burnout! Go go go!"]); }
+    else if (T.voice && e.type === "say") voice(e.t, e.w);
+    else if (T.voice && e.type === "combo") voice(e.t, e.ids.map(clipFor));
+  });
+  return wavURL(out, R);
+}
+// lock screen / always-on display: what is happening and when the round ends
+const hm = d => d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+function mediaMeta() {
+  if (!("mediaSession" in navigator) || !clock.plan || !window.MediaMetadata) return;
+  try {
+    const sg = clock.seg, name = PRESETS[T.preset].name, end = sg ? new Date(Date.now() + (sg.e - elapsed()) * 1000) : null;
+    const title = !sg ? name : sg.k === "fight" ? "Round " + sg.round + " of " + T.rounds + " · bell at " + hm(end) : sg.k === "rest" ? "Rest · round " + sg.round + " starts " + hm(end) : "Get ready";
+    navigator.mediaSession.metadata = new MediaMetadata({title, artist:name + " · Strike Path", album:"Bag work", artwork:[{src:"icons/icon-512.png", sizes:"512x512", type:"image/png"}]});
+    if (clock.audio && navigator.mediaSession.setPositionState && isFinite(clock.audio.duration)) navigator.mediaSession.setPositionState({duration:clock.audio.duration, position:Math.min(elapsed(), clock.audio.duration), playbackRate:1});
+  } catch (e) {}
+}
+// keep the screen on during a workout, and ask again whenever you come back (phones drop the request when the screen changes)
+let wakeLock = null;
+async function keepAwake(on) {
+  if (!on) { try { wakeLock && wakeLock.release(); } catch (e) {} wakeLock = null; return; }
+  try { if (navigator.wakeLock && (!wakeLock || wakeLock.released)) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && running() && !clock.paused) { keepAwake(true); tickClock(); mediaMeta(); } });
 function saveSession() {
   if (!clock.done || clock.saved) return;
   const p = PRESETS[T.preset];
@@ -2173,9 +2349,9 @@ function saveSession() {
   clock.saved = true; persist(); renderLog(); renderTrophies(); renderHero();
 }
 function finishSession() {
-  clock.phase = "done"; clock.left = 0; clock.burning = false; clearInterval(clock.timer); ring(3);
+  clock.phase = "done"; clock.left = 0; clock.burning = false; clearInterval(clock.timer); keepAwake(false);
   saveSession();
-  setCallMsg(clock.done + " rounds in the bank. Great session."); trainStage.pose("stance"); say("Time! Great work.");
+  setCallMsg(clock.done + " rounds in the bank. Great session."); trainStage.pose("stance"); if (!clock.audio) say("Time! Great work.");
   $("sumStats").innerHTML = [[clock.done, "Rounds"], [Math.round(clock.done * T.len / 60), "Minutes"], [clock.combos, "Combos called"], ["~" + Math.round(clock.strikes), "Strikes thrown"]].map(s => '<div><b>' + s[0] + '<\/b><span class="label">' + s[1] + '<\/span><\/div>').join("");
   $("rpe").innerHTML = Array.from({length:10}, (_, i) => '<button id="rpe-' + (i + 1) + '" aria-pressed="false">' + (i + 1) + '<\/button>').join("");
   $("rpe").querySelectorAll("button").forEach((b, i) => b.addEventListener("click", () => {
@@ -2185,65 +2361,82 @@ function finishSession() {
   }));
   $("sumRounds").textContent = clock.perRound.length > 1 ? "Combos per round: " + clock.perRound.map(n => n || 0).join(" · ") : "";
   $("summary").hidden = false; $("tSave").hidden = true;
-  confetti();
+  try { if ("mediaSession" in navigator && window.MediaMetadata) navigator.mediaSession.metadata = new MediaMetadata({title:"Workout done · " + clock.done + " rounds", artist:"Strike Path"}); } catch (e) {}
+  paintClock(); confetti();
 }
 function tickClock() {
-  if (clock.paused) return;
-  const now = Date.now(); clock.left = (clock.endAt - now) / 1000;
-  if (clock.phase === "ready" && clock.left <= 3.05 && clock.left > 0 && Math.ceil(clock.left) !== clock.lastBeep) { clock.lastBeep = Math.ceil(clock.left); beep(); }
-  if (clock.phase === "fight") {
-    if (T.warn && !clock.warned && clock.left <= 10) { clock.warned = true; if (T.quiet) notify("warn"); else clap(2); }
-    if (T.burn && !clock.burning && clock.left <= 20) {
-      clock.burning = true;
-      const kicks = themeFor(clock.round) === "kicks" && callable().includes("teep");
-      setCallMsg("Burnout! Nonstop " + (kicks ? "teeps" : "jab-cross") + " to the bell"); say("Burnout! Go go go!");
-      trainStage.load(kicks ? ["chamberL", "teep"] : ["jab", "cross"], {force:true});
-    }
-    if (clock.burning && clock.left > 0) clock.strikes += .2 * 2.2;
-    if (!clock.burning && now >= clock.nextCall && clock.left > 3) call();
+  if (!clock.plan || clock.phase === "done" || clock.phase === "idle") return;
+  const P = clock.plan, el = elapsed();
+  while (clock.ei < P.ev.length && P.ev[clock.ei].t <= el) {
+    const e = P.ev[clock.ei++], stale = el - e.t > 1.5, sg = segAt(e.t);
+    if (sg && sg !== clock.seg) enterSeg(sg, stale);
+    fire(e, stale);
   }
-  if (clock.left <= 0) {
-    if (clock.phase === "ready") startRound();
-    else if (clock.phase === "fight") {
-      const before = snapshot();
-      S.rounds++; clock.done++; markToday(); persist(); renderHUD(); renderHero(); renderTrophies();
-      toast("+10 XP · Round " + clock.round + " done", "xp"); celebrate(before);
-      if (clock.round >= T.rounds) finishSession();
-      else {
-        clock.phase = "rest"; clock.burning = false; clock.endAt = now + T.rest * 1000; clock.left = T.rest; clock.round++; ring(1);
-        const th = THEMES[themeFor(clock.round)];
-        setCallMsg("Rest. Breathe. Next: " + th.name + " round."); trainStage.pose("stance"); say("Rest. Next up, " + th.name + " round.");
-      }
-    } else if (clock.phase === "rest") startRound();
-  }
+  if (el >= P.total) { finishSession(); return; }
+  const sg = segAt(el); if (sg && sg !== clock.seg) enterSeg(sg, false);
+  clock.left = sg ? sg.e - el : 0;
   paintClock();
 }
-function startRound() {
-  clock.ladder = null; clock.queued = null; $("nextC").textContent = "";
-  clock.phase = "fight"; clock.warned = false; clock.burning = false; clock.endAt = Date.now() + T.len * 1000; clock.left = T.len; clock.nextCall = Date.now() + 2500;
-  const th = THEMES[themeFor(clock.round)];
-  ring(1); setCallMsg("Round " + clock.round + ": " + th.name + ". Fight!"); say("Round " + clock.round + ". " + th.name + ". Fight!");
-  paintClock();
+function enterSeg(sg, stale) {
+  clock.seg = sg; clock.phase = sg.k; clock.round = sg.round; clock.burning = false;
+  const th = THEMES[themeFor(sg.round)];
+  if (sg.k === "fight") { $("nextC").textContent = ""; setCallMsg("Round " + sg.round + ": " + th.name + ". Fight!"); if (!stale) popSfx("FIGHT!", "en"); }
+  else if (sg.k === "rest") { $("nextC").textContent = ""; setCallMsg("Rest. Breathe. Next: " + th.name + " round."); trainStage.pose("stance"); }
+  else setCallMsg("Get in stance. Hands up.");
+  mediaMeta();
 }
-let wakeLock = null;
+// one reusable audio element: unlocking it inside the tap lets the finished track play a moment later
+const bagAudio = new Audio(); bagAudio.preload = "auto";
+const SILENCE = wavURL(new Int16Array(1100), 11025);
+bagAudio.addEventListener("pause", () => { if (clock.audio === bagAudio && running() && !clock.paused && !bagAudio.ended) { clock.pausedAt = bagAudio.currentTime; clock.paused = true; paintClock(); } });
+bagAudio.addEventListener("play", () => { if (clock.audio === bagAudio && clock.paused) { clock.paused = false; paintClock(); } });
+async function beginBag() {
+  if (clock.starting) return;
+  clock.starting = true;
+  resetClock();
+  if (T.lock) { bagAudio.src = SILENCE; bagAudio.play().catch(() => {}); setCallMsg("Getting your coach ready…"); }
+  const plan = buildPlan();
+  let url = "";
+  if (T.lock) {
+    try {
+      url = renderTrack(plan, await loadCoach());
+      bagAudio.src = url; bagAudio.currentTime = 0; await bagAudio.play();
+    } catch (e) { if (url) URL.revokeObjectURL(url); url = ""; toast("The lock-screen coach can't play here, so keep the screen on"); }
+  }
+  Object.assign(clock, {plan, ei:0, seg:null, audio:url ? bagAudio : null, url, t0:Date.now(), paused:false, pausedAt:0, starting:false});
+  clock.phase = plan.segs[0].k;
+  keepAwake(true);
+  clock.timer = setInterval(tickClock, 200); tickClock();
+}
+function pauseBag() {
+  if (!running() || clock.paused) return;
+  clock.pausedAt = elapsed(); clock.paused = true; if (clock.audio) clock.audio.pause();
+  trainStage.stop(); try { speechSynthesis.cancel(); } catch (e) {} paintClock();
+}
+function resumeBag() {
+  if (!clock.paused) return;
+  clock.paused = false;
+  if (clock.audio) { clock.audio.currentTime = clock.pausedAt; clock.audio.play().catch(() => {}); } else clock.t0 = Date.now() - clock.pausedAt * 1000;
+  keepAwake(true); paintClock();
+}
 $("tStart").addEventListener("click", () => {
   ac();
-  if (clock.phase === "idle" || clock.phase === "done") {
-    resetClock();
-    if (T.ready) { clock.phase = "ready"; clock.endAt = Date.now() + 10000; clock.left = 10; setCallMsg("Get in stance. Hands up."); say("Get ready"); }
-    else startRound();
-    clock.timer = setInterval(tickClock, 200);
-    try { navigator.wakeLock && navigator.wakeLock.request("screen").then(w => { wakeLock = w; }).catch(() => {}); } catch (e) {}
-  } else if (!clock.paused) { clock.paused = true; clock.left = (clock.endAt - Date.now()) / 1000; trainStage.stop(); try { speechSynthesis.cancel(); } catch (e) {} }
-  else { clock.paused = false; clock.endAt = Date.now() + clock.left * 1000; clock.nextCall = Date.now() + 1500; }
-  paintClock();
+  if (!running()) beginBag();
+  else if (!clock.paused) pauseBag();
+  else resumeBag();
 });
-$("tSkip").addEventListener("click", () => { if (clock.phase === "rest" || clock.phase === "ready") { clock.paused = false; startRound(); } });
+$("tSkip").addEventListener("click", () => {
+  if (!(clock.phase === "rest" || clock.phase === "ready") || !clock.seg) return;
+  const to = clock.seg.e;
+  if (clock.paused) clock.pausedAt = to;
+  if (clock.audio) clock.audio.currentTime = to; else if (!clock.paused) clock.t0 = Date.now() - to * 1000;
+  tickClock(); mediaMeta();
+});
 let endArmed = 0;
 $("tReset").addEventListener("click", () => {
   const running = clock.phase !== "idle" && clock.phase !== "done";
   if (running && endArmed < Date.now()) { endArmed = Date.now() + 3000; $("tReset").textContent = "Tap again to end"; setTimeout(() => { if (endArmed <= Date.now()) $("tReset").textContent = "End"; }, 3100); return; }
-  endArmed = 0; $("tReset").textContent = "End"; resetClock(); try { wakeLock && wakeLock.release(); } catch (e) {} showTr("home");
+  endArmed = 0; $("tReset").textContent = "End"; resetClock(); showTr("home");
 });
 
 // ---- bag work screens: workout list -> round-by-round plan -> live ----
@@ -2276,7 +2469,7 @@ function paintTrHome() {
 function paintPlan() {
   const p = PRESETS[T.preset], tot = T.rounds * T.len + (T.rounds - 1) * T.rest + (T.ready ? 10 : 0);
   $("trPlanName").textContent = p.name;
-  $("trMeta").textContent = T.rounds + (T.rounds === 1 ? " round" : " rounds") + " · about " + Math.round(tot / 60) + " min · " + OPT.pace.lbl(T.pace) + " pace · " + (T.calls === "numbers" ? "numbers" : "names");
+  $("trMeta").textContent = T.rounds + (T.rounds === 1 ? " round" : " rounds") + " · about " + Math.round(tot / 60) + " min · " + OPT.pace.lbl(T.pace) + " pace · " + (T.calls === "numbers" ? "numbers" : "names") + (T.lock ? " · keeps going if your phone locks" : "");
   $("trRounds").innerHTML = Array.from({length:T.rounds}, (_, i) => {
     const th = THEMES[themeFor(i + 1)];
     return '<li><span class="n">' + (i + 1) + '<\/span><b>' + th.name + ' round<\/b><span class="t">' + fmtTime(T.len) + '<\/span><small>' + th.d + (T.burn ? ' Last 20 s: burnout.' : '') + '<\/small><\/li>' + (i < T.rounds - 1 ? '<li class="rest">Rest ' + T.rest + ' s<\/li>' : '');

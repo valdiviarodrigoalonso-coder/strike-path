@@ -1,8 +1,8 @@
 // Strike Path offline cache. tools/build.js stamps the version, so each new build replaces the old cache.
-const VERSION = "3a3868eb59";
+const VERSION = "9ded935e66";
 const CACHE = "strikepath-" + VERSION;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./config.js", "./sync.js",
-  "./vendor/three.min.js", "./vendor/supabase.js",
+  "./vendor/three.min.js", "./vendor/supabase.js", "./audio/coach.wav", "./audio/coach.json",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"].concat(["./img/ex/abwheel-0.jpg","./img/ex/abwheel-1.jpg","./img/ex/adductor-0.jpg","./img/ex/adductor-1.jpg","./img/ex/bench-0.jpg","./img/ex/bench-1.jpg","./img/ex/calf-0.jpg","./img/ex/calf-1.jpg","./img/ex/chop-0.jpg","./img/ex/chop-1.jpg","./img/ex/dip-0.jpg","./img/ex/dip-1.jpg","./img/ex/fly-0.jpg","./img/ex/fly-1.jpg","./img/ex/hang-0.jpg","./img/ex/hang-1.jpg","./img/ex/hipthrust-0.jpg","./img/ex/hipthrust-1.jpg","./img/ex/inccurl-0.jpg","./img/ex/inccurl-1.jpg","./img/ex/kickback-0.jpg","./img/ex/kickback-1.jpg","./img/ex/lat-0.jpg","./img/ex/lat-1.jpg","./img/ex/legcurl-0.jpg","./img/ex/legcurl-1.jpg","./img/ex/legext-0.jpg","./img/ex/legext-1.jpg","./img/ex/pallof-0.jpg","./img/ex/pallof-1.jpg","./img/ex/pullup-0.jpg","./img/ex/pullup-1.jpg","./img/ex/pushdown-0.jpg","./img/ex/pushdown-1.jpg","./img/ex/rdf-0.jpg","./img/ex/rdf-1.jpg","./img/ex/rdl-0.jpg","./img/ex/rdl-1.jpg","./img/ex/revcurl-0.jpg","./img/ex/revcurl-1.jpg","./img/ex/row-0.jpg","./img/ex/row-1.jpg","./img/ex/sap-0.jpg","./img/ex/sap-1.jpg","./img/ex/shrug-0.jpg","./img/ex/shrug-1.jpg","./img/ex/squat-0.jpg","./img/ex/squat-1.jpg","./img/ex/tread-0.jpg","./img/ex/tread-1.jpg","./img/ex/wristcurl-0.jpg","./img/ex/wristcurl-1.jpg"]);
 
 self.addEventListener("install", e => {

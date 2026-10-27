@@ -16,6 +16,7 @@ It installs on your phone like an app, works offline, and syncs between devices 
 | `manifest.webmanifest`, `icons/` | What makes it installable, with its home-screen icon |
 | `vendor/` | Local copies of three.js (r128) and supabase-js (2.45.4) so it works offline |
 | `supabase/schema.sql` | The database table and privacy rules |
+| `audio/coach.wav`, `audio/coach.json` | The bag-work coach's recorded calls (Windows text-to-speech), used for the lock-screen coach |
 | `img/ex/` | Exercise photos, start (`-0`) and finish (`-1`), from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (public domain) |
 
 Your data is saved on the device first, every time. When you're signed in and online it also saves to your account;

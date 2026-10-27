@@ -2,7 +2,7 @@
 const VERSION = "__VERSION__";
 const CACHE = "strikepath-" + VERSION;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./config.js", "./sync.js",
-  "./vendor/three.min.js", "./vendor/supabase.js",
+  "./vendor/three.min.js", "./vendor/supabase.js", "./audio/coach.wav", "./audio/coach.json",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"].concat(__PHOTOS__);
 
 self.addEventListener("install", e => {
