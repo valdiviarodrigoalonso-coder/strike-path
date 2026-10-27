@@ -1108,13 +1108,15 @@ const MOVES = [
    drill:"Hold your stance in a mirror for 3 × 1 min. Then have a partner give you light pushes from different angles. You shouldn't tip over.",
    frames:["bounce"]},
   {id:"footwork", lv:0, name:"Step & Drag", tag:"Move in every direction without crossing your feet.",
-   steps:["To go forward, push off the rear foot and step the lead foot a few inches forward.",
-          "Drag the rear foot the same distance so your stance stays the same width.",
-          "To go back, the rear foot moves first and the lead foot follows. To go sideways, move the foot nearest that direction first.",
-          "Stay light on the balls of your feet with your guard up the whole time."],
+   steps:["Forward: push off the rear foot and step the lead foot a few inches forward, then drag the rear foot the same distance.",
+          "Back: the rear foot steps back first, then the lead foot follows the same distance.",
+          "Right (orthodox): the right foot steps out first, then the left foot follows.",
+          "Left (orthodox): the left foot steps out first, then the right foot follows. The rule: the foot nearest where you're going moves first.",
+          "After every step your stance is the same width as before. Stay light on the balls of your feet with your guard up the whole time."],
    warn:["Crossing your feet or bringing them together.","Bouncing high instead of gliding.","Dropping your hands while you move."],
    drill:"Box-step drill: 4 steps forward, 4 right, 4 back, 4 left. 3 rounds × 2 min.",
-   frames:["stepA","stepB","stance","stepC","stepD"]},
+   // one foot at a time, and each pair of steps comes back to where it started, so nothing ever slides
+   frames:["fwd1","fwd2","back1","home","bk1","bk2","bkret","home","rt1","rt2","rtret","home","lt1","lt2","ltret"]},
   {id:"jab", lv:0, name:"Jab", tag:"Your fastest punch. It measures distance and sets up everything else.", call:"Jab",
    steps:["From stance, shoot the lead hand straight at the target, turning the fist palm-down as the arm extends.",
           "Raise your lead shoulder to cover your chin. The rear glove stays glued to your cheek.",
@@ -1323,10 +1325,20 @@ const STANCE = {hip:[0,.82,0], yawH:40, yawS:45, lean:[.08,0], LF:[.30,0,-.14], 
 const POSES = {
   stance:{},
   bounce:{hip:[0,.77,0]},
-  stepA:{hip:[.06,.82,0], LF:[.44,0,-.14]},
-  stepB:{hip:[.13,.82,0], LF:[.44,0,-.14], RF:[-.15,0,.14]},
-  stepC:{hip:[-.06,.82,0], RF:[-.42,0,.14]},
-  stepD:{hip:[-.13,.82,0], RF:[-.42,0,.14], LF:[.17,0,-.14]},
+  // footwork: forward (lead foot first), back (rear foot first), right (right foot first), left (left foot first)
+  home:{},
+  fwd1:{hip:[.06,.82,0], LF:[.44,0,-.14]},
+  fwd2:{hip:[.14,.82,0], LF:[.44,0,-.14], RF:[-.14,.05,.14]},
+  back1:{hip:[.07,.82,0], LF:[.44,0,-.14]},
+  bk1:{hip:[-.07,.82,0], RF:[-.42,.05,.14]},
+  bk2:{hip:[-.14,.82,0], RF:[-.42,.05,.14], LF:[.16,0,-.14]},
+  bkret:{hip:[-.07,.82,0], RF:[-.42,.05,.14]},
+  rt1:{hip:[0,.82,.06], RF:[-.28,.05,.26]},
+  rt2:{hip:[0,.82,.12], RF:[-.28,.05,.26], LF:[.30,0,-.02]},
+  rtret:{hip:[0,.82,.06], RF:[-.28,.05,.26]},
+  lt1:{hip:[0,.82,-.06], LF:[.30,0,-.26]},
+  lt2:{hip:[0,.82,-.12], LF:[.30,0,-.26], RF:[-.28,.05,.02]},
+  ltret:{hip:[0,.82,-.06], LF:[.30,0,-.26]},
   jab:{hip:[.09,.80,0], yawH:50, yawS:72, lean:[.15,0], LF:[.41,0,-.14], LH:[1.05,1.36,-.06], LHp:[0,-1,-.3]},
   cross:{hip:[.14,.80,0], yawH:12, yawS:-38, lean:[.2,0], RF:[-.26,.08,.14], RFyaw:0, kneeR:143, RHa:{to:[1.1,1.38,0], elbow:170}, RHp:[0,-1,.35]},
   hookLoad:{yawS:30, yawH:32, lean:[.1,-.05], bag:.9},
@@ -1412,6 +1424,12 @@ function lerpRes(a, b, f, curve) {
     if (Array.isArray(x)) o[k] = x.map((v, i) => v + (y[i] - v) * f);
     else if (ANGLE_KEYS.includes(k)) { const d = ((y - x + 540) % 360) - 180; o[k] = x + d * f; }
     else o[k] = x + (y - x) * f;
+  }
+  for (const k of ["LF", "RF"]) {
+    const x = a[k], y = b[k];
+    if (!x || !y || x[1] > .09 || y[1] > .09 || Math.hypot(y[0] - x[0], y[2] - x[2]) < .04) continue;
+    const ff = Math.min(1, Math.max(0, curve ? curve(k, base) : base));
+    o[k] = o[k].slice(); o[k][1] += Math.sin(Math.PI * ff) * .05;
   }
   return o;
 }
@@ -1602,7 +1620,7 @@ function placeCam(camera, az, el, dist) {
 // strikes snap out and come straight back; chambers are quick; defense is a touch slower
 // Punches about 0.4 s out and back (Stanley et al. 2018). Roundhouse about 1 s: chamber 14%, extension 11%,
 // recoil 69% (Gavagan & Sayers 2017), so kicks chamber and extend fast and come back slower.
-const TIMING = {stance:[170, 30], fast:[200, 90], kick:[130, 110], chamber:[150, 20], move:[300, 200]};
+const TIMING = {stance:[170, 30], fast:[200, 90], kick:[130, 110], chamber:[150, 20], move:[300, 200], step:[340, 230]};
 // Kinetic chain: hips start first, shoulders follow, the fist or foot arrives last and is fastest at contact.
 // The trunk does most of its turning late in a punch (after about 80% of the punch time).
 const CURVES = {
@@ -1610,11 +1628,13 @@ const CURVES = {
   kick:(k, f) => k === "yawH" || k === "yawS" ? 1 - Math.pow(1 - f, 2) : (k === "LF" || k === "RF") ? Math.pow(f, 1.6) : ease(f),
   chamber:(k, f) => 1 - Math.pow(1 - f, 2)
 };
+const STEP_FRAMES = ["home", "fwd1", "fwd2", "back1", "bk1", "bk2", "bkret", "rt1", "rt2", "rtret", "lt1", "lt2", "ltret"];
 const KIND = {jab:"fast", cross:"fast", hook:"fast", upper:"fast", parry:"fast", backfist:"fast", catchCross:"fast", superPunch:"fast",
   body:"kick", low:"kick", head:"kick", teep:"kick", switchKick:"kick", knee:"kick", backKick:"kick", flyKnee:"kick", check:"kick",
   chamberL:"chamber", hookLoad:"chamber", bodyCh:"chamber", lowCh:"chamber", headCh:"chamber", switchCh:"chamber", backCh:"chamber", superChamber:"chamber", dip:"chamber", switchPrep:"chamber", spinTurn:"chamber"};
 const BAG_X = 1.1;
 const bagFor = f => (POSES[f] && POSES[f].bag) || BAG_X;
+STEP_FRAMES.forEach(k => { KIND[k] = "step"; });
 function buildSeq(frames) {
   const s = [{p:resolve("stance"), d:260, h:520, name:"stance"}];
   frames.forEach(f => { const kind = f === "stance" ? "stance" : KIND[f] || "move", t = TIMING[kind]; s.push({p:resolve(f), d:t[0], h:t[1], kind, name:f}); });
