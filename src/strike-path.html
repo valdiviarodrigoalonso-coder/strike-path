@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Strike Path</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: fight-night poster. Sticky scoreboard header, ring-mat hero with a live 3D fighter, belt-by-belt path, fight camp timer, iron room. Single committed dark look. */
 :root{
@@ -406,6 +403,150 @@ textarea{width:100%;min-height:80px;resize:vertical;background:var(--bg);border:
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
+
+/* ===== Hevy-style layout: black canvas, gray cards, one blue accent, bottom tab bar on phones ===== */
+:root{--bg:#000;--mat:#1c1c1e;--mat-2:#2c2c2e;--line:#2c2c2e;--fg:#fff;--muted:#8e8e93;--acc:#2f8cf6;--green:#34c759;--warm:#f5a623;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,system-ui,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif}
+h1,h2,h3,.exhead b,.rotbtn b,.pvlist b,.plan b,.preset b,.theme b,.core .hd b,.coreex b,.coreclock .cp b,.badge b,.belt h3,.summary h3,.toast.big,.rank-name,.brand,.tab{text-transform:none;letter-spacing:-.01em}
+.label{letter-spacing:0;text-transform:none;font-size:13px;font-weight:600}
+.btn{text-transform:none;letter-spacing:0;border-radius:10px;font-weight:600}
+.btn.blue{background:var(--acc);color:#fff}.btn.blue:hover{background:#4a9cff}
+.btn.full{width:100%;padding:12px}
+.acc{color:var(--acc)}
+#view-lift,#view-trophies{max-width:720px;margin-inline:auto}
+.restbar{border-color:var(--acc)}.restbar b{color:var(--acc)}
+
+/* bottom tab bar (phones) */
+.tabbar{display:none}
+.tb{display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer;min-width:66px}
+.tb svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tb[aria-current="page"]{color:var(--acc);background:rgba(47,140,246,.16)}
+@media (max-width:860px){
+  .top{position:static}
+  .top .tabs{display:none}
+  body{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  .tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;gap:2px;padding:5px;border-radius:999px;background:rgba(30,30,32,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.6)}
+  .restbar,.toasts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+}
+
+/* page headers and small buttons */
+.pghead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 12px}
+.pghead h2{font-size:30px;font-weight:800}
+.sub{display:block;margin:24px 0 10px;color:var(--muted);font-size:14px;font-weight:600}
+.roundbtn{width:38px;height:38px;border-radius:50%;border:0;background:var(--mat);color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+.roundbtn svg,.pill svg,.restline svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.roundbtn.sm{width:32px;height:32px;background:transparent;color:var(--muted)}
+.linkbtn{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;cursor:pointer;padding:6px 4px}
+
+/* routine cards */
+.routines{display:flex;flex-direction:column;gap:12px}
+.rcard{background:var(--mat);border-radius:14px;padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.rch{display:flex;align-items:center;gap:8px;min-height:32px}
+.rtitle{border:0;background:none;padding:0;font-size:19px;font-weight:700;color:var(--fg);cursor:pointer;text-align:left}
+.rch .roundbtn{margin-left:auto}
+.rcl{margin:0;color:var(--muted);font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rcard small{font-size:13px}
+.rcard .btn{margin-top:6px}
+.nx{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(47,140,246,.18);color:var(--acc);white-space:nowrap}
+.nx.live{background:rgba(52,199,89,.18);color:var(--green)}
+.livebar{width:100%;display:flex;align-items:center;gap:10px;justify-content:space-between;border:0;border-radius:14px;padding:14px 16px;background:rgba(47,140,246,.14);color:var(--fg);font-size:15px;cursor:pointer;margin-bottom:4px;text-align:left}
+.fitbox{margin-top:22px}.fitbox summary{cursor:pointer;font-weight:600}.fitbox ul{margin-top:12px}
+
+/* routine page and live log */
+.dayhead{display:flex;align-items:center;gap:10px;margin:18px 0 12px;flex-wrap:wrap}
+.dayhead h2{font-size:22px;font-weight:700;flex:1;min-width:0}
+.dayhead.live{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,0px));z-index:15;background:var(--bg);margin:0 -16px 6px;padding:10px 16px 10px;border-bottom:1px solid var(--mat)}
+.dayhead.live h2{font-size:17px}
+.dayhead .btn.sm{padding:8px 16px;font-size:15px}
+.wkstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;padding-top:4px}
+.wkstats span{display:block;font-size:12px;color:var(--muted)}
+.wkstats b{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+.pvmeta{margin:8px 0 4px;font-size:14px;text-align:center}
+.ex.hv{background:transparent;border:0;border-radius:0;padding:10px 0 18px;border-bottom:1px solid var(--mat);gap:10px}
+.ex.hv.complete{border-color:var(--mat)}
+.exh{display:flex;align-items:center;gap:10px}
+.exn{flex:1;min-width:0}
+.exn b{display:block;color:var(--acc);font-size:17px;font-weight:600;line-height:1.25}
+.exn div{margin-top:3px}
+.exh .tgt{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+.av{flex:none;width:42px;height:42px;border-radius:50%;background:#f2f2f7;color:#111;display:grid;place-items:center;font-size:13px;font-weight:800}
+.ex.complete .av{background:var(--green);color:#fff}
+.restline{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.restline svg{width:16px;height:16px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--mat);border:0;border-radius:10px;padding:7px 11px;font-size:14px;font-weight:500;color:var(--fg);cursor:pointer}
+.pill svg{width:16px;height:16px}
+.pill select{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--fg);font:inherit;padding:0;cursor:pointer}
+.pill select option{background:var(--mat)}
+.pill[aria-pressed="true"]{background:rgba(47,140,246,.18);color:var(--acc)}
+.exnote{width:100%;min-height:44px;background:var(--mat);border:0;border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit;font-size:16px;resize:vertical}
+.sugg2{font-size:13px;color:var(--muted)}
+.stbl{display:flex;flex-direction:column;gap:3px}
+.sth,.str{display:grid;grid-template-columns:30px minmax(0,1fr) 70px 58px 38px;gap:8px;align-items:center}
+.sth{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;padding:0 6px 2px}
+.sth span:nth-child(n+3){text-align:center}
+.str{padding:4px 6px;border-radius:8px;transition:background .15s}
+.str.done{background:rgba(52,199,89,.17)}
+.sn{border:0;background:none;color:var(--fg);font-weight:700;font-size:15px;cursor:pointer;padding:6px 0;border-radius:6px}
+.str.warm .sn{color:var(--warm)}
+.prev{font:inherit;font-size:14px;color:var(--muted);border:0;background:none;text-align:left;cursor:pointer;padding:6px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.prev[disabled]{cursor:default}
+.str input[type=number]{width:100%;min-width:0;background:var(--mat);border:1px solid var(--mat-2);border-radius:8px;padding:8px 2px;text-align:center;font-weight:600;font-size:16px;color:var(--fg);font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.str input[type=number]::-webkit-inner-spin-button,.str input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.str input[type=number]:focus{outline:none;border-color:var(--acc)}
+.str.done input[type=number]{background:transparent;border-color:transparent}
+.ck{appearance:none;-webkit-appearance:none;width:34px;height:34px;margin:0;border-radius:8px;background:var(--mat-2);cursor:pointer;display:grid;place-items:center;justify-self:center}
+.ck::after{content:"";width:13px;height:7px;border-left:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:translateY(-2px) rotate(-45deg)}
+.ck:checked{background:var(--green)}.ck:checked::after{border-color:#fff}
+.addrow{display:flex;gap:8px}
+.addset{flex:1;border:0;border-radius:10px;background:var(--mat);color:var(--fg);font-weight:600;font-size:15px;padding:10px;cursor:pointer}
+.rmset{width:48px;border:0;border-radius:10px;background:var(--mat);color:var(--muted);font-size:20px;cursor:pointer}
+.discard{width:100%;margin-top:18px;border:0;border-radius:10px;background:var(--mat);color:#ff453a;font-weight:600;font-size:15px;padding:12px;cursor:pointer}
+.ptbl{display:flex;flex-direction:column}
+.pth,.ptr{display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;padding:7px 10px;font-size:15px;font-variant-numeric:tabular-nums}
+.pth{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.ptr:nth-child(even){background:var(--mat);border-radius:8px}
+.ptr .w{color:var(--warm);font-weight:700}
+.sheet{border:0;border-radius:16px;background:var(--mat);color:var(--fg);padding:18px;width:min(460px,100% - 24px);max-height:85vh;overflow:auto}
+.sheet::backdrop{background:rgba(0,0,0,.6)}
+.sheet .chip{background:var(--mat-2)}
+.sheethd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.sheethd h3{font-size:19px;font-weight:700}
+
+/* profile */
+.pfhead{display:flex;align-items:center;gap:16px}
+.pfav{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--acc),#1a4fa3);color:#fff;flex:none}
+.pfhead > div > b{font-size:20px;font-weight:700;display:block}
+.pfstats{display:flex;gap:24px;margin-top:6px}
+.pfstats span{display:block;font-size:13px;color:var(--muted)}.pfstats b{font-size:17px;font-weight:600}
+.chartcard{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.chartcard .hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chartcard .hd b{font-size:18px}
+.vchart{position:relative;height:170px;margin:6px 0 24px 46px}
+.vchart .gl{position:absolute;left:0;right:0;border-top:1px dashed #3a3a3c}
+.vchart .gl span{position:absolute;right:calc(100% + 8px);top:-8px;font-size:11px;color:var(--muted);white-space:nowrap}
+.vbars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:5px}
+.vbars > div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;position:relative;min-width:0}
+.vbars i{display:block;background:var(--acc);border-radius:3px 3px 0 0;min-height:2px}
+.vbars i.z{background:var(--mat-2)}
+.vbars em{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;color:var(--muted);white-space:nowrap}
+.segs{display:flex;gap:8px;flex-wrap:wrap}
+.seg{border:0;border-radius:999px;padding:7px 14px;background:var(--mat-2);color:var(--fg);font-weight:600;font-size:14px;cursor:pointer}
+.seg[aria-pressed="true"]{background:var(--acc);color:#fff}
+.fcard{padding:16px 0;border-top:1px solid var(--mat)}
+.fch{display:flex;align-items:center;gap:10px}
+.fch b{display:block}.fch small{display:block;color:var(--muted);font-size:13px}
+.fcard h4{margin:12px 0 8px;font-size:18px;font-weight:700}
+.fstats{display:flex;gap:26px;flex-wrap:wrap}
+.fstats span{display:block;font-size:12px;color:var(--muted)}.fstats b{font-weight:500;font-size:15px}
+.fex{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.fex li{display:flex;align-items:center;gap:12px;font-size:15px}
+.fex .av{width:36px;height:36px;font-size:12px}
+.fmore{border:0;background:none;color:var(--muted);font-size:14px;padding:10px 0 0;cursor:pointer;width:100%;text-align:center}
+.feedmore{width:100%;margin-top:6px}
+@media (max-width:860px){.hud{flex-wrap:nowrap;align-items:flex-start}.rank{flex:1;min-width:0}.top .wrap{padding-block:8px;gap:8px}}
+@media (max-width:420px){.sth,.str{grid-template-columns:26px minmax(0,1fr) 62px 52px 36px;gap:6px}.pfstats{gap:16px}}
 </style>
 </head>
 <body>
@@ -414,10 +555,10 @@ textarea{width:100%;min-height:80px;resize:vertical;background:var(--bg);border:
   <div class="wrap">
     <div class="brand"><i aria-hidden="true"></i>Strike Path</div>
     <nav class="tabs" role="tablist" aria-label="Sections">
-      <button class="tab" role="tab" id="tab-path" data-view="path" aria-selected="true">Path</button>
+      <button class="tab" role="tab" id="tab-path" data-view="path" aria-selected="true">Learn</button>
       <button class="tab" role="tab" id="tab-train" data-view="train" aria-selected="false">Train</button>
-      <button class="tab" role="tab" id="tab-lift" data-view="lift" aria-selected="false">Workouts</button>
-      <button class="tab" role="tab" id="tab-trophies" data-view="trophies" aria-selected="false">Trophies</button>
+      <button class="tab" role="tab" id="tab-lift" data-view="lift" aria-selected="false">Workout</button>
+      <button class="tab" role="tab" id="tab-trophies" data-view="trophies" aria-selected="false">Profile</button>
     </nav>
     <div class="hud">
       <div class="rank">
@@ -525,51 +666,50 @@ textarea{width:100%;min-height:80px;resize:vertical;background:var(--bg);border:
 
   <!-- STRENGTH -->
   <section id="view-lift" role="tabpanel" aria-labelledby="tab-lift" hidden>
-    <div class="section-head" style="margin-top:24px">
-      <h2>Workout Log</h2>
-      <span class="label">Push · Pull · Legs · Run, logged in one place</span>
+    <div id="wkHome">
+      <div class="pghead"><h2>Workout</h2><button class="roundbtn" id="wkSet" aria-label="Rest timer and units"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button></div>
+      <div id="liveBanner"></div>
+      <span class="sub" id="rotCount">My Routines</span>
+      <div class="routines" id="rot"></div>
+      <details class="fitbox panel"><summary>How lifting fits with kickboxing</summary><ul class="tips" id="fitList"></ul></details>
     </div>
-    <div class="panel week2" id="weekCard"></div>
-    <div class="rot" id="rot"></div>
-    <div class="lift">
-      <div class="panel">
-        <div class="row" style="justify-content:space-between">
-          <h3 id="liftTitle" style="font-size:34px">Push day</h3>
-          <div class="chips">
-            <button class="chip" id="unitKg" aria-pressed="true">kg</button>
-            <button class="chip" id="unitLb" aria-pressed="false">lb</button>
-            <button class="chip" id="editProg" aria-pressed="false">Edit exercises</button>
-          </div>
-        </div>
-        <div class="tip" id="liftTip" style="margin-top:12px"></div>
-        <div class="timebar" id="liftTime"></div>
-        <div class="exlist" id="exList"></div>
-        <div id="coreBox"></div>
-        <div class="liftfoot">
-          <span class="muted" id="liftProgress">0 of 0 sets done</span>
-          <button class="btn gold" id="finishLift">Finish workout · +25 XP</button>
-        </div>
-      </div>
-      <div class="side">
-        <div class="panel" id="restPanel"></div>
-        <div class="panel"><span class="label">How it fits with kickboxing</span><ul class="tips" style="margin-top:10px" id="fitList"></ul></div>
-        <div class="panel"><span class="label">Recent workouts</span><ul class="list" id="liftList" style="margin-top:10px"></ul></div>
-      </div>
+    <div id="wkDay" hidden>
+      <div class="dayhead" id="dayHead"></div>
+      <div class="tip" id="liftTip"></div>
+      <div class="timebar" id="liftTime"></div>
+      <div class="exlist" id="exList"></div>
+      <div id="coreBox"></div>
+      <div class="liftfoot" hidden><span id="liftProgress"></span><button class="btn gold" id="finishLift">Finish workout</button></div>
     </div>
+    <dialog class="sheet" id="wkSheet" aria-labelledby="sheetTitle">
+      <div class="sheethd"><h3 id="sheetTitle">Workout settings</h3><button class="linkbtn" id="sheetClose">Done</button></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="label">Weight units</span><div class="chips"><button class="chip" id="unitKg" aria-pressed="true">kg</button><button class="chip" id="unitLb" aria-pressed="false">lb</button></div></div>
+      <div id="restPanel"></div>
+    </dialog>
   </section>
 
   <!-- TROPHIES -->
   <section id="view-trophies" role="tabpanel" aria-labelledby="tab-trophies" hidden>
-    <div class="section-head" style="margin-top:24px"><h2>Trophy Case</h2><span class="label" id="badgeCount"></span></div>
+    <div class="pghead"><h2>Profile</h2></div>
+    <div class="pfhead"><div class="pfav" id="pfAv" aria-hidden="true">R</div><div><b id="pfRank">Rookie</b><span class="muted" id="pfXp" style="font-size:14px"></span>
+      <div class="pfstats"><div><span>Workouts</span><b id="pfW">0</b></div><div><span>Streak</span><b id="pfS">0</b></div><div><span>Records</span><b id="pfR">0</b></div></div></div></div>
+    <div class="panel chartcard"><div class="hd"><b id="chTitle">0 hours this week</b><span class="muted" style="font-size:13px">Last 12 weeks</span></div><div class="vchart" id="chart"></div>
+      <div class="segs" role="group" aria-label="Chart shows"><button class="seg" data-ch="dur">Duration</button><button class="seg" data-ch="vol">Volume</button><button class="seg" data-ch="reps">Reps</button></div></div>
+    <span class="sub">This week</span>
+    <div class="panel week2" id="weekCard"></div>
+    <span class="sub">Workouts</span>
+    <div id="feed"></div>
+    <span class="sub">Trophies · <span id="badgeCount"></span></span>
+    <div class="badges" id="badges" style="margin-top:0"></div>
+    <span class="sub">Stats</span>
     <div class="stats" id="stats"></div>
-    <div class="badges" id="badges"></div>
     <div class="panel" id="xferPanel" style="margin-top:20px;display:flex;flex-direction:column;gap:12px">
       <span class="label">Move your progress to another device</span>
       <div id="xferApp" hidden style="display:flex;flex-direction:column;gap:12px">
         <span class="muted" style="font-size:14px">Easiest: sign in to sync on both devices. Or use a one-time code. It's 6 characters, works once, and expires after an hour.</span>
         <div class="row"><button class="btn sm" id="codeMake">Get a code</button><span class="bigcode" id="codeOut" aria-live="polite"></span></div>
         <span class="muted" id="codeNote" style="font-size:13px"></span>
-        <div class="row"><label class="label" for="codeIn" style="width:100%">Got a code from your other device?</label><input id="codeIn" maxlength="9" placeholder="K7Q-4MZ" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn gold sm" id="codeUse">Bring it in</button></div>
+        <div class="row"><label class="label" for="codeIn" style="width:100%">Got a code from your other device?</label><input id="codeIn" type="text" inputmode="text" enterkeyhint="go" maxlength="9" placeholder="K7Q-4MZ" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"><button class="btn gold sm" id="codeUse">Bring it in</button></div>
         <span class="muted" id="codeMsg" style="font-size:13px"></span>
       </div>
       <div id="xferWeb" hidden style="display:flex;flex-direction:column;gap:10px">
@@ -624,6 +764,12 @@ textarea{width:100%;min-height:80px;resize:vertical;background:var(--bg);border:
   </div>
 </dialog>
 
+<nav class="tabbar" aria-label="Sections">
+  <button class="tb" data-view="path" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Learn</span></button>
+  <button class="tb" data-view="train" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><span>Train</span></button>
+  <button class="tb" data-view="lift" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6v12M17.5 6v12M3 9v6M21 9v6M6.5 12h11"/></svg><span>Workout</span></button>
+  <button class="tb" data-view="trophies" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Profile</span></button>
+</nav>
 <div class="restbar" id="restBar" hidden><span class="label">Rest</span><b id="restTime">1:30</b><button class="chip" id="restPlus">+30 s</button><button class="chip" id="restSkip">Skip</button></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
@@ -1344,8 +1490,8 @@ function normalize(d) {
       DAYS3.forEach(day => { if (s.lifts.prog[day].map(e => e.id).join() === OLD[day]) s.lifts.prog[day] = defaultProgram()[day]; });
       s.lifts.progV = 2;
     }
-    if (Array.isArray(L.logs)) s.lifts.logs = L.logs.filter(x => x && typeof x.d === "string" && DAYS3.includes(x.day) && Array.isArray(x.ex)).slice(-150).map(x => ({d:x.d, day:x.day,
-      ex:x.ex.filter(e => e && typeof e.id === "string" && Array.isArray(e.sets)).map(e => ({id:e.id.slice(0, 20), n:str(e.n, 60), sets:e.sets.filter(Array.isArray).slice(0, 10).map(t => [Math.max(0, +t[0] || 0), clampN(t[1],0,1000,0), !!t[2]])})), core:clampN(x.core,0,6,0), min:clampN(x.min,0,300,0)}));
+    if (Array.isArray(L.logs)) s.lifts.logs = L.logs.filter(x => x && typeof x.d === "string" && DAYS3.includes(x.day) && Array.isArray(x.ex)).slice(-150).map(x => Object.assign({d:x.d, day:x.day,
+      ex:x.ex.filter(e => e && typeof e.id === "string" && Array.isArray(e.sets)).map(e => Object.assign({id:e.id.slice(0, 20), n:str(e.n, 60), sets:e.sets.filter(Array.isArray).slice(0, 10).map(t => [Math.max(0, +t[0] || 0), clampN(t[1],0,1000,0), !!t[2]].concat(t[3] ? [1] : []))}, e.note ? {note:str(e.note, 300)} : {})), core:clampN(x.core,0,6,0), min:clampN(x.min,0,300,0)}, x.pr ? {pr:clampN(x.pr,0,50,0)} : {}));
   }
   if (Array.isArray(d.runs)) s.runs = d.runs.filter(x => x && typeof x.d === "string").slice(-300).map(x => ({d:x.d, km:Math.min(200, Math.max(0, +x.km || 0)), min:clampN(x.min,0,1000,0), t:str(x.t, 20) || "Easy", rpe:clampN(x.rpe,0,10,0), note:str(x.note, 200)}));
   s.weekGoal = clampN(d.weekGoal, 1, 40, 5);
@@ -1603,11 +1749,64 @@ function renderPath() {
   });
 }
 function renderTrophies() {
-  const got = BADGES.filter(b => b.ok()).length;
-  $("badgeCount").textContent = got + " of " + BADGES.length + " trophies";
+  const got = BADGES.filter(b => b.ok()).length, r = rankInfo(xp());
+  $("badgeCount").textContent = got + " of " + BADGES.length;
   const stats = [[xp(), "Total XP"], [totalChecks() + "/25", "Moves learned"], [S.rounds, "Rounds done"], [S.lifts.logs.length, "Strength workouts"], [bestStreak(), "Best streak (days)"], [S.prs, "Personal records"], [Math.round(S.sessions.reduce((a, x) => a + x.m, 0)), "Minutes on the clock"], [S.sessions.reduce((a, x) => a + x.s, 0).toLocaleString(), "Strikes thrown (est.)"]];
   $("stats").innerHTML = stats.map(s => '<div class="stat"><b>' + s[0] + '<\/b><span class="label">' + s[1] + '<\/span><\/div>').join("");
   $("badges").innerHTML = BADGES.map(b => '<div class="badge' + (b.ok() ? " got" : "") + '"><div class="medal">' + b.ab + '<\/div><div><b>' + b.name + '<\/b><small>' + b.d + '<\/small><\/div><\/div>').join("");
+  $("pfAv").textContent = r.name.charAt(0); $("pfRank").textContent = r.name;
+  $("pfXp").textContent = r.next ? xp() + " XP · " + r.toNext + " to next rank" : xp() + " XP · max rank";
+  $("pfW").textContent = S.lifts.logs.length + S.runs.length + S.sessions.length; $("pfS").textContent = streak(); $("pfR").textContent = S.prs;
+  renderWeek(); renderChart(); renderFeed();
+}
+// volume and reps count working sets of weighted lifts (not cardio, holds, warm-ups or assisted reps' weight)
+const exOf = (day, id) => (S.lifts.prog[day] || []).find(e => e.id === id.split("@")[0]);
+function liftStats(l) {
+  let vol = 0, reps = 0, sets = 0;
+  l.ex.forEach(x => { const e = exOf(l.day, x.id), k = e ? kindOf(e) : "lift"; x.sets.forEach(s => { if (!s[2]) return; sets++; if (k !== "lift" || s[3]) return; reps += s[1]; if (!(e && e.assist)) vol += s[0] * s[1]; }); });
+  return {vol, reps, sets};
+}
+const niceMax = v => { const p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 3 ? 3 : f <= 5 ? 5 : f <= 6 ? 6 : 10) * p; };
+const fmtK = v => v >= 10000 ? Math.round(v / 1000) + "k" : v >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(Math.round(v * 10) / 10);
+function renderChart() {
+  const wk = weeksBack(12).map(w => {
+    const e = new Date(w.start); e.setDate(e.getDate() + 7); const a = dayKey(w.start), b = dayKey(e), ls = S.lifts.logs.filter(l => l.d >= a && l.d < b).map(liftStats);
+    return {start:w.start, dur:w.total / 60, vol:ls.reduce((n, x) => n + x.vol, 0), reps:ls.reduce((n, x) => n + x.reps, 0)};
+  });
+  const key = ["dur", "vol", "reps"].includes(chMode) ? chMode : "dur", vals = wk.map(w => w[key]), step = niceMax(Math.max(key === "dur" ? 3 : 30, ...vals) / 3), top = step * 3, now = vals[vals.length - 1];
+  const lab = v => key === "dur" ? fmtK(v) + " hrs" : fmtK(v);
+  $("chTitle").textContent = key === "dur" ? (Math.round(now * 10) / 10) + " hours this week" : key === "vol" ? Math.round(now).toLocaleString() + " " + U() + " this week" : now.toLocaleString() + " reps this week";
+  $("chart").innerHTML = [0, 1, 2, 3].map(i => '<div class="gl" style="bottom:' + (i / 3 * 100) + '%"><span>' + lab(top * i / 3) + '<\/span><\/div>').join("") +
+    '<div class="vbars">' + wk.map((w, i) => '<div title="' + w.start.toLocaleDateString([], {month:"short", day:"numeric"}) + ': ' + lab(w[key]) + '"><i class="' + (w[key] ? "" : "z") + '" style="height:' + Math.max(1, w[key] / top * 100) + '%"><\/i>' + (i % 3 === 0 ? '<em>' + w.start.toLocaleDateString([], {month:"short", day:"numeric"}) + '<\/em>' : '') + '<\/div>').join("") + '<\/div>';
+  document.querySelectorAll("[data-ch]").forEach(b => b.setAttribute("aria-pressed", b.dataset.ch === key));
+}
+document.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => { chMode = b.dataset.ch; try { localStorage.setItem("strikepath.chart", chMode); } catch (e) {} renderChart(); }));
+const longDate = k => new Date(k + "T12:00").toLocaleDateString([], {weekday:"long", month:"short", day:"numeric", year:"numeric"});
+const fmtDur = m => { m = Math.round(m); return m >= 60 ? Math.floor(m / 60) + "h" + (m % 60 ? " " + m % 60 + "min" : "") : m + "min"; };
+const openFeed = new Set();
+function renderFeed() {
+  const it = [];
+  S.lifts.logs.forEach((l, i) => it.push({d:l.d, o:i, k:"lift", x:l}));
+  S.runs.forEach((r, i) => it.push({d:r.d, o:i, k:"run", x:r}));
+  S.sessions.forEach((s, i) => it.push({d:s.d, o:i, k:"bag", x:s}));
+  it.sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : b.o - a.o);
+  const stat = (l, v) => '<div><span>' + l + '<\/span><b>' + v + '<\/b><\/div>';
+  const card = (key, ab, title, date, stats, rows) => {
+    const open = openFeed.has(key), shown = open ? rows : rows.slice(0, 3);
+    return '<article class="fcard"><div class="fch">' + avatar(ab) + '<div><b>' + esc(title) + '<\/b><small>' + longDate(date) + '<\/small><\/div><\/div><div class="fstats" style="margin-top:12px">' + stats.join("") + '<\/div>' +
+      (rows.length ? '<ul class="fex">' + shown.join("") + '<\/ul>' + (rows.length > 3 ? '<button class="fmore" data-fk="' + key + '">' + (open ? "Show less" : "See " + (rows.length - 3) + " more exercise" + (rows.length - 3 === 1 ? "" : "s")) + '<\/button>' : '') : '') + '<\/article>';
+  };
+  $("feed").innerHTML = it.length ? it.slice(0, feedN).map(e => {
+    if (e.k === "lift") {
+      const l = e.x, st = liftStats(l), rows = l.ex.map(x => { const n = x.sets.filter(s => s[2]).length; return '<li>' + avatar(x.n || x.id) + '<span>' + n + ' set' + (n === 1 ? "" : "s") + ' ' + esc(x.n || "Exercise") + '<\/span><\/li>'; });
+      if (l.core) rows.push('<li>' + avatar("Core Finisher") + '<span>' + l.core + ' rounds Fight core finisher<\/span><\/li>');
+      return card("l" + e.o, cap(l.day), cap(l.day) + " day", l.d, [stat("Time", l.min ? fmtDur(l.min) : "–"), stat("Volume", Math.round(st.vol).toLocaleString() + " " + U()), stat("Sets", st.sets)].concat(l.pr ? [stat("Records", l.pr)] : []), rows);
+    }
+    if (e.k === "run") { const r = e.x; return card("r" + e.o, "Run", r.t + " run", r.d, [stat("Distance", r.km + " km"), stat("Time", fmtDur(r.min))].concat(r.km && r.min ? [stat("Pace", paceStr(r.min / r.km) + "/km")] : []).concat(r.rpe ? [stat("Effort", r.rpe + "/10")] : []), []); }
+    const s = e.x; return card("b" + e.o, "Bag Work", s.f || "Bag work", s.d, [stat("Time", fmtDur(s.m)), stat("Rounds", s.r)].concat(s.rpe ? [stat("Effort", s.rpe + "/10")] : []), []);
+  }).join("") + (it.length > feedN ? '<button class="btn ghost full feedmore" id="feedMore">Show more workouts<\/button>' : '') : '<p class="muted">No workouts yet. Start a routine on the Workout tab and it shows up here.<\/p>';
+  $("feed").querySelectorAll("[data-fk]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.fk; if (openFeed.has(k)) openFeed.delete(k); else openFeed.add(k); renderFeed(); }));
+  const more = $("feedMore"); if (more) more.addEventListener("click", () => { feedN += 10; renderFeed(); });
 }
 function renderAll() { renderHUD(); renderHero(); renderPath(); renderTrophies(); renderPool(); renderLog(); renderLift(); if ($("lesson").open && curId) fillLesson(curId, true); }
 
@@ -1677,14 +1876,19 @@ $("lsNext").addEventListener("click", () => { const i = MOVES.findIndex(m => m.i
 const VIEWS = ["path", "train", "lift", "trophies"];
 function showView(v) {
   VIEWS.forEach(x => { $("view-" + x).hidden = x !== v; $("tab-" + x).setAttribute("aria-selected", x === v ? "true" : "false"); });
+  document.querySelectorAll(".tb").forEach(b => b.setAttribute("aria-current", b.dataset.view === v ? "page" : "false"));
   if (v === "path") renderHero();
   try { localStorage.setItem("strikepath.view", v); } catch (e) {}
   scrollTo({top:0});
 }
-document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => showView(t.dataset.view)));
+// tapping Workout while already on it goes back to the routine list (a running workout keeps going)
+document.querySelectorAll(".tab, .tb").forEach(t => t.addEventListener("click", () => {
+  if (t.dataset.view === "lift" && !$("view-lift").hidden && wkScreen === "day") { wkScreen = "home"; editMode = false; renderLift(); }
+  showView(t.dataset.view);
+}));
 $("heroOpen").addEventListener("click", () => openLesson(nextMove().id));
 $("planMove").addEventListener("click", () => openLesson(nextMove().id));
-$("planLift").addEventListener("click", () => { liftDay = nextLiftDay(); renderLift(); showView("lift"); });
+$("planLift").addEventListener("click", () => { showView("lift"); openDay(liveDay() || nextLiftDay()); });
 $("planTrain").addEventListener("click", () => showView("train"));
 
 /* ================= FIGHT CAMP (ROUND TIMER + COACH) ================= */
@@ -2067,13 +2271,9 @@ $("restSkip").addEventListener("click", stopRest);
 // ---- workout stopwatch: runs from Start to Finish ----
 const startedAt = () => (draft[liftDay] || {}).__start || 0;
 const fmtClock = sec => { sec = Math.max(0, Math.floor(sec)); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), x = sec % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
-setInterval(() => {
-  if (!startedAt() || liftDay === "run") return;
-  const t = fmtClock((Date.now() - startedAt()) / 1000);
-  const sw = $("swTime"); if (sw) sw.textContent = t;
-  const lc = $("liftClock"); if (lc) lc.textContent = "Workout time " + t;
-}, 1000);
-const measureHeader = () => { const h = document.querySelector(".top"); if (h) document.documentElement.style.setProperty("--hdr", h.offsetHeight + "px"); };
+// every running workout clock on screen carries data-since (its start time)
+setInterval(() => { document.querySelectorAll("[data-since]").forEach(el => { el.textContent = fmtClock((Date.now() - +el.dataset.since) / 1000); }); }, 1000);
+const measureHeader = () => { const h = document.querySelector(".top"); if (h) document.documentElement.style.setProperty("--hdr", (getComputedStyle(h).position === "sticky" ? h.offsetHeight : 0) + "px"); };
 window.addEventListener("resize", measureHeader); setTimeout(measureHeader, 0);
 let swWake = null;
 
@@ -2081,7 +2281,7 @@ let liftDay = nextLiftDay(), editMode = false, runType = "Easy", discardArmed = 
 let draft = {}; try { draft = JSON.parse(localStorage.getItem("strikepath.draft") || "{}") || {}; } catch (e) {}
 const saveDraft = () => { try { localStorage.setItem("strikepath.draft", JSON.stringify(draft)); } catch (e) {} };
 const inc = () => S.lifts.unit === "lb" ? 5 : 2.5;
-function historyFor(id) { const out = []; S.lifts.logs.forEach(l => l.ex.forEach(e => { if (e.id === id && e.sets.some(s => s[2])) out.push({d:l.d, sets:e.sets.filter(s => s[2])}); })); return out; }
+function historyFor(id) { const out = []; S.lifts.logs.forEach(l => l.ex.forEach(e => { if (e.id === id && e.sets.some(s => s[2] && !s[3])) out.push({d:l.d, sets:e.sets.filter(s => s[2] && !s[3])}); })); return out; }
 function lastFor(id) { const h = historyFor(id); return h.length ? {e:{sets:h[h.length - 1].sets}, d:h[h.length - 1].d} : null; }
 const e1rm = (w, r) => w > 0 ? w * (1 + r / 30) : r;
 function bestFor(id) { let b = 0; historyFor(id).forEach(h => h.sets.forEach(s => { b = Math.max(b, e1rm(s[0], s[1])); })); return b; }
@@ -2102,7 +2302,7 @@ function suggestion(ex) {
 }
 function setsFor(ex) {
   const dd = (draft[liftDay] = draft[liftDay] || {}), key = logId(ex), sg = suggestion(ex);
-  if (!dd[key] || dd[key].length !== ex.s) dd[key] = Array.from({length:ex.s}, (_, i) => (dd[key] && dd[key][i]) || [sg.w, sg.r, false]);
+  if (!Array.isArray(dd[key]) || !dd[key].length) dd[key] = Array.from({length:ex.s}, () => [sg.w, sg.r, false]);
   return dd[key];
 }
 
@@ -2117,7 +2317,7 @@ function prCheck(ex, sets) {
   if ((ex.type || "lift") !== "lift" || ex.assist) return;
   const id = logId(ex); if (!historyFor(id).length) return;   // the first session sets the bar, it isn't a record yet
   const dd = draft[liftDay], pr = (dd.__pr = dd.__pr || {}), rec = (pr[id] = pr[id] || {});
-  const done = sets.filter(s => s[2]), topW = Math.max(0, ...done.map(s => +s[0] || 0)), vol = done.reduce((a, s) => a + (+s[0] || 0) * (+s[1] || 0), 0);
+  const done = sets.filter(s => s[2] && !s[3]), topW = Math.max(0, ...done.map(s => +s[0] || 0)), vol = done.reduce((a, s) => a + (+s[0] || 0) * (+s[1] || 0), 0);
   const mw = maxWeight(id), bv = bestVolume(id), u = S.lifts.unit;
   if (topW > mw && topW > (rec.w || 0)) { rec.w = topW; party("New heaviest: " + ex.n, topW + " " + u + ", the most you've ever lifted on it. Strong."); }
   else if (bv > 0 && vol > bv && !rec.v) { rec.v = vol; party("Volume record: " + ex.n, Math.round(vol).toLocaleString() + " " + u + " moved. Your best session on it yet."); }
@@ -2130,14 +2330,57 @@ function spark(vals) {
   return '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><\/svg>';
 }
 const openHist = new Set();
+// ---- workout screens, laid out like Hevy: routine list -> routine page -> live log ----
 function renderRot() {
-  const nd = nextLiftDay();
-  const items = DAYS3.map(d => { const last = [...S.lifts.logs].reverse().find(l => l.day === d), live = (draft[d] || {}).__start; return [d, cap(d), live ? "In progress" : (last ? "Last: " + niceDate(last.d) : "Not done yet") + " · " + S.lifts.prog[d].length + " exercises", d === nd && !live, live]; });
-  const lastRun = S.runs[S.runs.length - 1];
-  items.push(["run", "Run", lastRun ? "Last: " + niceDate(lastRun.d) + " · " + lastRun.km + " km" : "Log a run", false, false]);
-  $("rot").innerHTML = items.map(it => '<button class="rotbtn" id="rot-' + it[0] + '" data-d="' + it[0] + '" aria-pressed="' + (it[0] === liftDay) + '">' + (it[4] ? '<span class="nx" style="background:var(--red);color:#fff">Live<\/span>' : it[3] ? '<span class="nx">Next up<\/span>' : '') + '<b>' + it[1] + '<\/b><small>' + it[2] + '<\/small><\/button>').join("");
-  $("rot").querySelectorAll(".rotbtn").forEach(b => b.addEventListener("click", () => { liftDay = b.dataset.d; editMode = false; renderLift(); }));
+  const nd = nextLiftDay(), lv = liveDay(), lastRun = S.runs[S.runs.length - 1], lastBag = S.sessions[S.sessions.length - 1];
+  const card = (id, title, sub, list, btn, flag, edit) => '<div class="rcard" data-d="' + id + '"><div class="rch"><button class="rtitle">' + title + '<\/button>' + (flag || "") +
+    (edit ? '<button class="roundbtn sm" data-edit="' + id + '" aria-label="Edit ' + title + ' routine">' + ICON.dots + '<\/button>' : "") + '<\/div>' +
+    (list ? '<p class="rcl">' + esc(list) + '<\/p>' : "") + '<small class="muted">' + sub + '<\/small><button class="btn blue full" data-go="' + id + '">' + btn + '<\/button><\/div>';
+  $("liveBanner").innerHTML = lv ? '<button class="livebar" data-go="' + lv + '"><span><b>Workout in progress<\/b><br><span class="muted">' + cap(lv) + ' · <span data-since="' + draft[lv].__start + '">' + fmtClock((Date.now() - draft[lv].__start) / 1000) + '<\/span><\/span><\/span><span class="acc">Resume ›<\/span><\/button>' : "";
+  $("rotCount").textContent = "My Routines (" + (DAYS3.length + 2) + ")";
+  $("rot").innerHTML = DAYS3.map(d => {
+      const last = [...S.lifts.logs].reverse().find(l => l.day === d), m = dayMinutes(d), live = d === lv;
+      return card(d, cap(d), (last ? "Last: " + niceDate(last.d) : "Not done yet") + " · about " + (m.lift + m.warm + m.core) + " min", S.lifts.prog[d].map(e => e.n).join(", "),
+        live ? "Resume Workout" : "Start Routine", live ? '<span class="nx live">In progress<\/span>' : d === nd && !lv ? '<span class="nx">Next up<\/span>' : "", true);
+    }).join("") +
+    card("run", "Run", lastRun ? "Last: " + niceDate(lastRun.d) + " · " + lastRun.km + " km" : "Distance, time and effort", "", "Log Run", "", false) +
+    card("bag", "Bag Work", lastBag ? "Last: " + niceDate(lastBag.d) + " · " + lastBag.r + " rounds" : "Rounds with your 3D coach calling strikes", "", "Open Round Timer", "", false);
+  const go = (d, start) => {
+    if (d === "bag") { showView("train"); return; }
+    if (start && DAYS3.includes(d) && !(draft[d] || {}).__start) { openDay(d); startWorkout(); return; }
+    openDay(d);
+  };
+  $("view-lift").querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); go(b.dataset.go, true); }));
+  $("rot").querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); openDay(b.dataset.edit, true); }));
+  $("rot").querySelectorAll(".rcard").forEach(c => c.addEventListener("click", () => go(c.dataset.d, false)));
 }
+let wkScreen = "home", feedN = 6, chMode = "dur";
+try { chMode = localStorage.getItem("strikepath.chart") || "dur"; } catch (e) {}
+const openNotes = new Set();
+const liveDay = () => DAYS3.find(d => (draft[d] || {}).__start);
+const ICON = {
+  back:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/><\/svg>',
+  down:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/><\/svg>',
+  clock:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/><\/svg>',
+  note:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/><\/svg>',
+  dots:'<svg viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h.01M12 12h.01M19 12h.01"/><\/svg>'
+};
+const U = () => S.lifts.unit === "lb" ? "lbs" : "kg";
+const fmtRest = s => s >= 60 ? Math.floor(s / 60) + "min" + (s % 60 ? " " + s % 60 + "s" : "") : s + "s";
+const REST_OPTS = [15, 30, 45, 60, 75, 90, 105, 120, 150, 180, 210, 240, 300];
+const colsFor = ex => kindOf(ex) === "cardio" ? ["km", "Min"] : kindOf(ex) === "hold" ? ["", "Sec"] : [(ex.assist ? "-" : "") + U(), "Reps"];
+const prevStr = (ex, s) => { if (!s) return "–"; const k = kindOf(ex); if (k === "cardio") return (s[0] ? s[0] + " km in " : "") + s[1] + " min"; if (k === "hold") return s[1] + " s"; return (s[0] ? (ex.assist ? "-" : "") + s[0] + U() + " × " : "") + s[1]; };
+const initials = n => esc((n.replace(/[^A-Za-z ]/g, " ").trim().split(/\s+/).filter(w => w && !/^(and|the|of|with|or)$/i.test(w)).slice(0, 2).map(w => w[0]).join("") || "•").toUpperCase());
+const avatar = n => '<span class="av" aria-hidden="true">' + initials(n) + '<\/span>';
+const lastNoteFor = id => { for (let i = S.lifts.logs.length - 1; i >= 0; i--) { const e = S.lifts.logs[i].ex.find(x => x.id === id && x.note); if (e) return e.note; } return ""; };
+const setVol = sets => sets.reduce((a, s) => a + (s[2] && !s[3] ? (+s[0] || 0) * (+s[1] || 0) : 0), 0);
+function openDay(d, edit) { liftDay = d; editMode = !!edit; wkScreen = "day"; renderLift(); scrollTo({top:0}); }
+function startWorkout() {
+  const dd = (draft[liftDay] = draft[liftDay] || {}); dd.__start = Date.now(); saveDraft(); ac();
+  try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(w => { swWake = w; }).catch(() => {}); } catch (e) {}
+  toast("Workout started. Let's go"); renderLift(); scrollTo({top:0});
+}
+function openSheet() { const d = $("wkSheet"); try { d.showModal(); } catch (e) { d.setAttribute("open", ""); } }
 function renderRun() {
   const list = $("exList");
   const recent = S.runs.slice(-8).reverse(), w = weekMins(weekStart(Date.now())), wkKm = S.runs.filter(r => r.d >= dayKey(weekStart(Date.now()))).reduce((a, r) => a + r.km, 0);
@@ -2174,20 +2417,20 @@ function tagsFor(ex, prog) {
 // ---- preview: see the whole routine before you start ----
 function renderPreview(prog) {
   const list = $("exList"), m = dayMinutes(liftDay);
-  list.innerHTML = '<div class="ex"><div class="exhead"><b>' + cap(liftDay) + ' routine<\/b><span class="tgt">' + prog.length + ' exercises · about ' + (m.lift + m.warm + m.core) + ' min<\/span><\/div>' +
-    '<ol class="pvlist">' + prog.map(ex => {
-      const L = lastFor(logId(ex)), sg = suggestion(ex);
-      return '<li><div class="pvhead"><b>' + esc(ex.n) + '<\/b><span class="muted">' + targetFor(ex) + (kindOf(ex) === "lift" || kindOf(ex) === "hold" ? ' · rest ' + fmtTime(restFor(ex)) : '') + '<\/span>' + tagsFor(ex, prog) + '<\/div>' +
-        '<small>' + (L ? "Last: " + L.e.sets.map(fmtSetFor(ex)).join(", ") + " · " : "") + esc(sg.note) + '<\/small><\/li>';
+  const rowsOf = ex => { const L = lastFor(logId(ex)), sg = suggestion(ex); return L ? L.e.sets : Array.from({length:ex.s}, () => [sg.w, sg.r, false]); };
+  list.innerHTML = '<button class="btn blue full" id="startW">Start Routine<\/button><p class="muted pvmeta">' + prog.length + ' exercises · about ' + (m.lift + m.warm + m.core) + ' min<\/p>' +
+    prog.map(ex => {
+      const k = kindOf(ex), c = colsFor(ex), sg = suggestion(ex), tags = tagsFor(ex, prog); let n = 0;
+      return '<div class="ex hv"><div class="exh">' + avatar(ex.n) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
+        (k !== "cardio" ? '<div class="restline">' + ICON.clock + 'Rest Timer: ' + fmtRest(restFor(ex)) + '<\/div>' : '') +
+        '<div class="ptbl"><div class="pth"><span>Set<\/span><span>' + c[0] + '<\/span><span>' + c[1] + '<\/span><\/div>' +
+        rowsOf(ex).map(s => '<div class="ptr"><span' + (s[3] ? ' class="w">W' : '>' + (++n)) + '<\/span><span>' + (k === "hold" ? "" : s[0] === "" ? "–" : s[0]) + '<\/span><span>' + s[1] + '<\/span><\/div>').join("") + '<\/div>' +
+        '<div class="sugg2">' + esc(sg.note) + '<\/div><\/div>';
     }).join("") +
-    '<li class="core"><div class="pvhead"><b>Fight core finisher<\/b><span class="muted">' + S.lifts.coreRounds + ' rounds · about ' + m.core + ' min<\/span><\/div><small>Ab wheel, Pallof press, banded chops<\/small><\/li><\/ol>' +
-    '<div class="row" style="margin-top:12px"><button class="btn gold" id="startW">Start workout<\/button><button class="btn ghost" id="editW">Edit routine<\/button><\/div><\/div>';
-  $("startW").addEventListener("click", () => {
-    const dd = (draft[liftDay] = draft[liftDay] || {}); dd.__start = Date.now(); saveDraft(); ac();
-    try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(w => { swWake = w; }).catch(() => {}); } catch (e) {}
-    toast("Workout started. Let's go"); renderLift(); scrollTo({top:$("exList").getBoundingClientRect().top + scrollY - 90, behavior:"smooth"});
-  });
-  $("editW").addEventListener("click", () => { editMode = true; renderLift(); });
+    '<div class="ex hv"><div class="exh">' + avatar("Core Finisher") + '<div class="exn"><b>Fight core finisher<\/b><\/div><span class="tgt">' + S.lifts.coreRounds + ' rounds · ' + m.core + ' min<\/span><\/div><div class="sugg2">Ab wheel, Pallof press and banded chops: 40 s on, 20 s off, at the end of the workout.<\/div><\/div>' +
+    '<button class="btn ghost full" id="editW2" style="margin-top:14px">Edit Routine<\/button>';
+  $("startW").addEventListener("click", startWorkout);
+  $("editW2").addEventListener("click", () => { editMode = true; renderLift(); scrollTo({top:0}); });
 }
 
 // ---- editor: name, sets, reps, rest, superset, order ----
@@ -2242,99 +2485,130 @@ function renderRestPanel() {
   $("sndTest").addEventListener("click", () => notify("rest"));
 }
 
+const RUN_TIP = "<b>Running builds your gas tank.<\/b> Three-minute rounds are hard on the engine; running is the cheapest way to build it, and you can do it from home with no gas money.";
 function renderLift() {
-  renderWeek(); renderRot(); renderRestPanel();
-  const run = liftDay === "run", prog = run ? [] : S.lifts.prog[liftDay], live = !run && !!startedAt();
-  $("liftTitle").textContent = run ? "Run day" : cap(liftDay) + " day";
-  $("liftTip").innerHTML = run ? "<b>Running builds your gas tank.<\/b> Three-minute rounds are hard on the engine; running is the cheapest way to build it, and you can do it from home with no gas money." : LIFT_TIP[liftDay];
+  renderRot(); renderRestPanel(); recentLifts(); if (!$("view-trophies").hidden) renderWeek();
+  $("unitKg").setAttribute("aria-pressed", S.lifts.unit === "kg"); $("unitLb").setAttribute("aria-pressed", S.lifts.unit === "lb");
+  const home = wkScreen === "home";
+  $("wkHome").hidden = !home; $("wkDay").hidden = home;
+  if (home) return;
+  const run = liftDay === "run", prog = run ? [] : S.lifts.prog[liftDay], live = !run && !!startedAt(), head = $("dayHead");
+  head.className = "dayhead" + (live && !editMode ? " live" : "");
+  $("liftTip").innerHTML = run ? RUN_TIP : LIFT_TIP[liftDay];
+  $("liftTip").hidden = live || editMode;
   $("liftTime").hidden = run || live;
   $("coreBox").hidden = run || !live || editMode;
-  document.querySelector(".liftfoot").hidden = run || !live || editMode;
-  $("editProg").hidden = run; $("unitKg").hidden = run; $("unitLb").hidden = run;
-  if (run) { stopRest(); renderRun(); return; }
-  $("unitKg").setAttribute("aria-pressed", S.lifts.unit === "kg"); $("unitLb").setAttribute("aria-pressed", S.lifts.unit === "lb");
-  $("editProg").setAttribute("aria-pressed", editMode); $("editProg").textContent = editMode ? "Done editing" : "Edit routine";
+  const back = (label, icon) => '<button class="roundbtn" id="dayBack" aria-label="' + label + '">' + icon + '<\/button>';
+  const bindBack = () => $("dayBack").addEventListener("click", () => { wkScreen = "home"; editMode = false; renderLift(); scrollTo({top:0}); });
+  if (run) { head.innerHTML = back("Back to routines", ICON.back) + '<h2>Run<\/h2>'; bindBack(); renderRun(); return; }
   renderTime();
-  if (editMode) { renderEditor(prog); recentLifts(); return; }
-  if (!live) { renderPreview(prog); recentLifts(); return; }
+  if (editMode) {
+    head.innerHTML = back("Back to routines", ICON.back) + '<h2>Edit ' + cap(liftDay) + '<\/h2><button class="linkbtn" id="editDone">Done<\/button>'; bindBack();
+    $("editDone").addEventListener("click", () => { editMode = false; renderLift(); });
+    renderEditor(prog); return;
+  }
+  if (!live) {
+    head.innerHTML = back("Back to routines", ICON.back) + '<h2>' + cap(liftDay) + '<\/h2><button class="linkbtn" id="editW">Edit<\/button>'; bindBack();
+    $("editW").addEventListener("click", () => { editMode = true; renderLift(); });
+    renderPreview(prog); return;
+  }
   const list = $("exList"); list.textContent = "";
-  const bar = document.createElement("div"); bar.className = "swbar";
-  bar.innerHTML = '<span class="label">Workout<\/span><b id="swTime">' + fmtClock((Date.now() - startedAt()) / 1000) + '<\/b><span class="muted">' + cap(liftDay) + ' day<\/span><button class="btn ghost sm sp" id="swDiscard">' + (discardArmed > Date.now() ? "Tap again to discard" : "Discard") + '<\/button>';
-  list.appendChild(bar);
-  bar.querySelector("#swDiscard").addEventListener("click", () => {
-    if (discardArmed > Date.now()) { delete draft[liftDay]; saveDraft(); discardArmed = 0; stopRest(); if (coreT.run) { coreT.run = false; clearInterval(coreT.timer); } try { swWake && swWake.release(); } catch (e) {} toast("Workout discarded"); renderLift(); return; }
-    discardArmed = Date.now() + 3000; renderLift(); setTimeout(() => { if (discardArmed && discardArmed <= Date.now()) renderLift(); }, 3100);
-  });
-  let total = 0, doneN = 0;
+  let doneN = 0, vol = 0;
   prog.forEach((ex, xi) => {
-    const card = document.createElement("div"); card.className = "ex";
+    const card = document.createElement("div"); card.className = "ex hv";
     const sets = setsFor(ex), sg = suggestion(ex), id = logId(ex), H = historyFor(id), L = H.length ? H[H.length - 1] : null;
-    total += sets.length; const dn = sets.filter(s => s[2]).length; doneN += dn;
+    const kind = kindOf(ex), c = colsFor(ex), tags = tagsFor(ex, prog), dn = sets.filter(s => s[2]).length, fmtSet = fmtSetFor(ex);
+    doneN += dn; if (kind === "lift" && !ex.assist) vol += setVol(sets);
     if (dn === sets.length) card.classList.add("complete");
-    const kind = kindOf(ex), fmtSet = fmtSetFor(ex), tags = tagsFor(ex, prog);
     const best = kind === "lift" ? bestFor(id) : 0, mw = kind === "lift" ? maxWeight(id) : 0;
-    const hist = H.length ? '<details class="hist" data-id="' + id + '"' + (openHist.has(id) ? " open" : "") + '><summary>History · ' + H.length + ' session' + (H.length > 1 ? "s" : "") + (mw ? ' · heaviest ' + mw + ' ' + S.lifts.unit : '') + (best ? ' · 1-rep max est. ' + Math.round(best) : '') + '<\/summary>' +
+    const hist = H.length ? '<details class="hist" data-id="' + id + '"' + (openHist.has(id) ? " open" : "") + '><summary>History · ' + H.length + ' session' + (H.length > 1 ? "s" : "") + (mw ? ' · heaviest ' + mw + ' ' + U() : '') + (best ? ' · 1-rep max est. ' + Math.round(best) : '') + '<\/summary>' +
       (kind === "lift" ? spark(H.slice(-12).map(h => Math.max(...h.sets.map(s => e1rm(s[0], s[1]))))) : "") +
       '<ul>' + H.slice(-6).reverse().map(h => '<li>' + niceDate(h.d) + ': ' + h.sets.map(fmtSet).join(", ") + '<\/li>').join("") + '<\/ul><\/details>' : '';
-    const sid = i => liftDay + "-" + id.replace("@", "_") + "-" + i;
-    const f0 = (s, i) => kind === "hold" ? '<span><\/span>' :
-      '<label for="w-' + sid(i) + '"><input type="number" inputmode="decimal" step="' + (kind === "cardio" ? "0.1" : "0.5") + '" min="0" id="w-' + sid(i) + '" data-i="' + i + '" data-f="0" value="' + (s[0] === "" ? "" : s[0]) + '" placeholder="0" aria-label="' + (kind === "cardio" ? "Distance" : "Set " + (i + 1) + " weight") + '"><span>' + (kind === "cardio" ? "km" : (ex.assist ? "assist " : "") + S.lifts.unit) + '<\/span><\/label>';
-    card.innerHTML = '<div class="exhead"><b>' + esc(ex.n) + '<\/b><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' + (tags ? '<div>' + tags + '<\/div>' : '') +
-      '<div class="last">' + (L ? "Last time (" + niceDate(L.d) + "): " + L.sets.map(fmtSet).join(", ") : "No log yet") + '<\/div><div><span class="sugg">' + esc(sg.note) + '<\/span><\/div>' +
-      '<div class="sets">' + sets.map((s, i) => '<div class="set' + (s[2] ? " done" : "") + '"><span class="sl">' + (kind === "cardio" ? "Done" : "Set " + (i + 1)) + '<\/span>' + f0(s, i) +
-        '<label for="r-' + sid(i) + '"><input type="number" inputmode="numeric" step="1" min="0" id="r-' + sid(i) + '" data-i="' + i + '" data-f="1" value="' + s[1] + '" aria-label="' + (kind === "cardio" ? "Minutes" : kind === "hold" ? "Seconds" : "Set " + (i + 1) + " reps") + '"><span>' + (kind === "cardio" ? "min" : kind === "hold" ? "sec" : "reps") + '<\/span><\/label>' +
-        '<input class="tick" type="checkbox" id="d-' + sid(i) + '" data-i="' + i + '" aria-label="Set ' + (i + 1) + ' done"' + (s[2] ? " checked" : "") + '><\/div>').join("") + '<\/div>' + hist;
+    const dd = draft[liftDay], notes = (dd.__notes = dd.__notes || {}), lastNote = lastNoteFor(id), rs = restFor(ex), noteOpen = openNotes.has(id) || !!notes[id];
+    const ropts = REST_OPTS.includes(rs) ? REST_OPTS : REST_OPTS.concat(rs).sort((a, b) => a - b);
+    const sid = i => liftDay + "-" + id.replace("@", "_") + "-" + i, prevs = [];
+    let wn = 0;
+    const rows = sets.map((s, i) => {
+      const warm = !!s[3], n = warm ? 0 : ++wn, p = warm || !L ? null : L.sets[n - 1] || null; prevs[i] = p;
+      return '<div class="str' + (s[2] ? " done" : "") + (warm ? " warm" : "") + '"><button class="sn" data-i="' + i + '" aria-label="' + (warm ? "Warm-up set" : "Set " + n) + '. Tap to switch between warm-up and working set">' + (warm ? "W" : n) + '<\/button>' +
+        '<button class="prev" data-i="' + i + '"' + (p ? ' aria-label="Copy last time: ' + esc(prevStr(ex, p)) + '"' : ' disabled') + '>' + esc(prevStr(ex, p)) + '<\/button>' +
+        (kind === "hold" ? '<span><\/span>' : '<input type="number" inputmode="decimal" step="' + (kind === "cardio" ? "0.1" : "0.5") + '" min="0" id="w-' + sid(i) + '" data-i="' + i + '" data-f="0" value="' + (s[0] === "" ? "" : s[0]) + '" placeholder="0" aria-label="' + (kind === "cardio" ? "Distance in km" : "Set " + (i + 1) + (ex.assist ? " assistance" : " weight")) + '">') +
+        '<input type="number" inputmode="numeric" step="1" min="0" id="r-' + sid(i) + '" data-i="' + i + '" data-f="1" value="' + s[1] + '" aria-label="' + (kind === "cardio" ? "Minutes" : kind === "hold" ? "Seconds" : "Set " + (i + 1) + " reps") + '">' +
+        '<input class="ck" type="checkbox" id="d-' + sid(i) + '" data-i="' + i + '" aria-label="Set ' + (i + 1) + ' done"' + (s[2] ? " checked" : "") + '><\/div>';
+    }).join("");
+    card.innerHTML = '<div class="exh">' + avatar(ex.n) + '<div class="exn"><b>' + esc(ex.n) + '<\/b>' + (tags ? '<div>' + tags + '<\/div>' : '') + '<\/div><span class="tgt">' + targetFor(ex) + '<\/span><\/div>' +
+      '<div class="pills">' + (kind === "cardio" ? '' : '<label class="pill">' + ICON.clock + '<select aria-label="Rest timer for ' + esc(ex.n) + '">' + ropts.map(v => '<option value="' + v + '"' + (v === rs ? " selected" : "") + '>Rest: ' + fmtRest(v) + '<\/option>').join("") + '<\/select><\/label>') +
+        '<button class="pill" data-note aria-pressed="' + noteOpen + '">' + ICON.note + 'Note<\/button><\/div>' +
+      '<textarea class="exnote" data-nid="' + esc(id) + '" maxlength="300" aria-label="Note for ' + esc(ex.n) + '" placeholder="' + esc(lastNote ? "Last time: " + lastNote : "Add a note for this exercise") + '"' + (noteOpen ? "" : " hidden") + '>' + esc(notes[id] || "") + '<\/textarea>' +
+      '<div class="sugg2">' + esc(sg.note) + '<\/div>' +
+      '<div class="stbl"><div class="sth"><span>Set<\/span><span>Previous<\/span><span>' + c[0] + '<\/span><span>' + c[1] + '<\/span><span aria-label="Done">✓<\/span><\/div>' + rows + '<\/div>' +
+      '<div class="addrow"><button class="addset">+ Add Set<\/button>' + (sets.length > 1 ? '<button class="rmset" aria-label="Remove the last set">−<\/button>' : '') + '<\/div>' + hist;
     card.querySelectorAll("input[type=number]").forEach(inp => inp.addEventListener("input", () => { sets[+inp.dataset.i][+inp.dataset.f] = inp.value === "" ? "" : +inp.value; saveDraft(); }));
     const det = card.querySelector("details"); if (det) det.addEventListener("toggle", () => { if (det.open) openHist.add(id); else openHist.delete(id); });
-    card.querySelectorAll("input.tick").forEach(cb => cb.addEventListener("change", () => {
-      const i = +cb.dataset.i, dd = draft[liftDay]; sets[i][2] = cb.checked; if (sets[i][0] === "") sets[i][0] = 0;
-      if (cb.checked && !dd.__start) dd.__start = Date.now();
+    card.querySelectorAll(".sn").forEach(b => b.addEventListener("click", () => { const s = sets[+b.dataset.i]; if (s[3]) s.length = 3; else s[3] = 1; saveDraft(); renderLift(); }));
+    card.querySelectorAll(".prev").forEach(b => b.addEventListener("click", () => { const i = +b.dataset.i, p = prevs[i]; if (!p) return; sets[i][0] = p[0]; sets[i][1] = p[1]; saveDraft(); renderLift(); }));
+    const sel = card.querySelector("select"); if (sel) sel.addEventListener("change", () => { ex.rest = +sel.value; persist(); });
+    card.querySelector("[data-note]").addEventListener("click", () => {
+      if (openNotes.has(id)) openNotes.delete(id); else openNotes.add(id);
+      renderLift(); const t = document.querySelector('.exnote[data-nid="' + id + '"]'); if (t && !t.hidden) t.focus();
+    });
+    card.querySelector(".exnote").addEventListener("input", e => { notes[id] = e.target.value.slice(0, 300); saveDraft(); });
+    card.querySelector(".addset").addEventListener("click", () => {
+      if (sets.length >= 10) { toast("10 sets is the most for one exercise"); return; }
+      const l = sets[sets.length - 1] || [sg.w, sg.r]; sets.push([l[0], l[1], false]); saveDraft(); renderLift();
+    });
+    const rm = card.querySelector(".rmset"); if (rm) rm.addEventListener("click", () => { sets.pop(); saveDraft(); renderLift(); });
+    card.querySelectorAll("input.ck").forEach(cb => cb.addEventListener("change", () => {
+      const i = +cb.dataset.i; sets[i][2] = cb.checked; if (sets[i][0] === "") sets[i][0] = 0;
       saveDraft();
       if (cb.checked) prCheck(ex, sets);
       renderLift();
       if (!cb.checked || kind === "cardio") return;
       if (sets.every(s => s[2])) toast("Nice work: " + ex.n + " done");
-      const lastOfDay = xi === prog.length - 1 && sets.every(s => s[2]);
-      if (lastOfDay) return;
-      if (ex.ss && partnerAfter(prog, xi)) { toast("Superset: straight to " + prog[xi + 1].n); return; }
+      if (xi === prog.length - 1 && sets.every(s => s[2])) return;
+      if (ex.ss && partnerAfter(prog, xi) && !sets[i][3]) { toast("Superset: straight to " + prog[xi + 1].n); return; }
       startRest(restFor(ex));
     }));
     list.appendChild(card);
   });
-  $("liftProgress").innerHTML = doneN + " of " + total + " sets done" + (coreDone() ? " · core done" : "") + ' · <span id="liftClock">Workout time ' + fmtClock((Date.now() - startedAt()) / 1000) + '<\/span>';
-  $("finishLift").disabled = doneN === 0 && !coreDone();
+  head.innerHTML = back("Minimize workout", ICON.down) + '<h2>Log Workout<\/h2><button class="roundbtn" id="wkSet2" aria-label="Rest timer settings">' + ICON.clock + '<\/button><button class="btn blue sm" id="wkFinish">Finish<\/button>' +
+    '<div class="wkstats"><div><span>Duration<\/span><b class="acc" data-since="' + startedAt() + '">' + fmtClock((Date.now() - startedAt()) / 1000) + '<\/b><\/div><div><span>Volume<\/span><b>' + Math.round(vol).toLocaleString() + ' ' + U() + '<\/b><\/div><div><span>Sets<\/span><b>' + doneN + '<\/b><\/div><\/div>';
+  bindBack();
+  $("wkSet2").addEventListener("click", openSheet);
+  $("wkFinish").addEventListener("click", () => { if (!doneN && !coreDone()) { toast("Check off at least one set first"); return; } $("finishLift").click(); });
   renderCore();
-  recentLifts();
+  const disc = document.createElement("button"); disc.className = "discard"; disc.textContent = discardArmed > Date.now() ? "Tap again to discard" : "Discard Workout";
+  disc.addEventListener("click", () => {
+    if (discardArmed > Date.now()) { delete draft[liftDay]; saveDraft(); discardArmed = 0; openNotes.clear(); stopRest(); if (coreT.run) { coreT.run = false; clearInterval(coreT.timer); } try { swWake && swWake.release(); } catch (e) {} toast("Workout discarded"); renderLift(); return; }
+    discardArmed = Date.now() + 3000; renderLift(); setTimeout(() => { if (discardArmed && discardArmed <= Date.now()) renderLift(); }, 3100);
+  });
+  $("coreBox").appendChild(disc);
 }
-function recentLifts() {
-  $("fitList").innerHTML = FIT.map(f => "<li><span>" + f + "<\/span><\/li>").join("");
-  const rec = S.lifts.logs.slice(-6).reverse();
-  $("liftList").innerHTML = rec.length ? rec.map(l => {
-    const sets = l.ex.reduce((a, e) => a + e.sets.filter(s => s[2]).length, 0);
-    return '<li><span><b>' + cap(l.day) + '<\/b> · ' + sets + ' sets' + (l.core ? ' + core' : '') + (l.min ? ' · ' + l.min + ' min' : '') + '<\/span><span class="muted">' + niceDate(l.d) + '<\/span><\/li>';
-  }).join("") : '<li class="empty">No workouts yet. Pick a day, look it over, and press Start.<\/li>';
-}
+function recentLifts() { $("fitList").innerHTML = FIT.map(f => "<li><span>" + f + "<\/span><\/li>").join(""); }
+$("wkSet").addEventListener("click", openSheet);
+$("sheetClose").addEventListener("click", () => $("wkSheet").close());
+$("wkSheet").addEventListener("click", e => { if (e.target === $("wkSheet")) $("wkSheet").close(); });
 $("unitKg").addEventListener("click", () => { S.lifts.unit = "kg"; persist(); renderLift(); });
 $("unitLb").addEventListener("click", () => { S.lifts.unit = "lb"; persist(); renderLift(); });
-$("editProg").addEventListener("click", () => { editMode = !editMode; renderLift(); });
 $("finishLift").addEventListener("click", () => {
   const before = snapshot(), dd = draft[liftDay] || {};
   const prog = S.lifts.prog[liftDay];
-  const log = {d:today(), day:liftDay, ex:prog.map(ex => ({id:logId(ex), n:logName(ex), sets:(dd[logId(ex)] || []).map(s => [+s[0] || 0, +s[1] || 0, !!s[2]])})).filter(e => e.sets.some(s => s[2])), core:dd.__core || 0};
-  if (!log.ex.length && !log.core) return;
+  const log = {d:today(), day:liftDay, ex:prog.map(ex => ({id:logId(ex), n:logName(ex), sets:(dd[logId(ex)] || []).map(s => [+s[0] || 0, +s[1] || 0, !!s[2]].concat(s[3] ? [1] : [])), note:((dd.__notes || {})[logId(ex)] || "").trim().slice(0, 300) || undefined})).filter(e => e.sets.some(s => s[2])), core:dd.__core || 0};
+  if (!log.ex.length && !log.core) { toast("Check off at least one set first"); return; }
   if (coreT.run) { coreT.run = false; clearInterval(coreT.timer); }
   stopRest();
   const m = dayMinutes(liftDay);
   log.min = dd.__start ? Math.min(300, Math.max(1, Math.round((Date.now() - dd.__start) / 60000))) : m.lift + m.warm + (log.core ? m.core : 0);
   const prCount = Object.values(dd.__pr || {}).filter(r => r.w || r.v).length;
+  if (prCount) log.pr = prCount;
   S.lifts.logs.push(log); S.prs += prCount; markToday();
   delete draft[liftDay]; saveDraft();
   try { swWake && swWake.release(); } catch (e) {}
   persist();
   toast(cap(log.day) + " day done in " + log.min + " min · +25 XP" + (prCount ? " · " + prCount + " personal record" + (prCount > 1 ? "s" : "") : ""), "xp");
   if (prCount) { confetti(); prChime(); }
-  liftDay = nextLiftDay();
-  renderHUD(); renderHero(); renderTrophies(); renderLift();
+  liftDay = nextLiftDay(); wkScreen = "home"; openNotes.clear();
+  renderHUD(); renderHero(); renderTrophies(); renderLift(); scrollTo({top:0});
   celebrate(before);
 });
 $("bagForm").addEventListener("submit", e => {
@@ -2395,10 +2669,11 @@ $("codeMake").addEventListener("click", async () => {
     $("codeNote").textContent = "Type this on your other device within an hour. It works once.";
   } catch (e) {
     const m = (e && (e.message || "")) + " " + (e && e.code || "");
-    $("codeNote").textContent = /PGRST202|create_transfer|function/i.test(m) ? "Short codes need one more setup step: run supabase/transfer.sql in your Supabase project." : "Couldn't make a code. Check your connection and try again.";
+    $("codeNote").textContent = /PGRST202|create_transfer|function/i.test(m) ? "Short codes need one more setup step: run supabase/transfer.sql in your Supabase project." : "Couldn't make a code. Check your connection and try again. (" + m.trim() + ")";
   }
   $("codeMake").disabled = false;
 });
+$("codeIn").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("codeUse").click(); } });
 $("codeIn").addEventListener("input", () => { const v = $("codeIn").value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6); $("codeIn").value = v.length > 3 ? fmtCode(v) : v; });
 $("codeUse").addEventListener("click", async () => {
   const T2 = window.StrikePath && window.StrikePath.transfer, code = $("codeIn").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -2410,7 +2685,7 @@ $("codeUse").addEventListener("click", async () => {
     if (!d) { $("codeMsg").textContent = "That code didn't work. It may have expired or already been used; get a new one."; return; }
     try { restoreFrom(d); } catch (e) { $("codeMsg").textContent = "That code had no progress in it, so nothing changed here."; return; }
     $("codeMsg").textContent = "Done. Your progress is on this device" + (window.StrikePath.signedIn ? " and syncing." : "."); $("codeIn").value = "";
-  } catch (e) { $("codeMsg").textContent = "Couldn't fetch that code. Check your connection and try again."; }
+  } catch (e) { $("codeMsg").textContent = "Couldn't fetch that code. Check your connection and try again. (" + ((e && (e.message || e.code)) || "unknown error") + ")"; }
 });
 // arriving from the Claude-hosted page's "Open in the app" link
 if (isApp && location.hash.startsWith("#import=")) {

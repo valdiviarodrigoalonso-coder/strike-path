@@ -45,9 +45,9 @@ Then tap **Sign in to sync** (under your rank) and create your account. Use the 
 
 ### Moving your progress
 - **Between devices running the app:** sign in to sync on both. Or, without an account, use a short code:
-  **Trophies → Get a code** on one device (like `K7Q-4MZ`), then type it under
+  **Profile → Get a code** on one device (like `K7Q-4MZ`), then type it under
   **Got a code from your other device?** on the other. Codes work once and expire after an hour.
-- **From the Claude-hosted page:** **Trophies → Open in the Strike Path app**. The app opens with your progress
+- **From the Claude-hosted page:** **Profile → Open in the Strike Path app**. The app opens with your progress
   and asks before bringing it in. Do this on the computer, sign in there, and your phone gets it through sync.
 - A long copy-and-paste backup code is still under **Long backup code**, for the same device.
 
