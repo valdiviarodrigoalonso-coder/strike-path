@@ -23,7 +23,9 @@ swap("</body>",
   '// and reload once when a new version takes over so you never sit on an old copy.\n' +
   'if ("serviceWorker" in navigator) window.addEventListener("load", () => {\n' +
   '  const had = !!navigator.serviceWorker.controller; let reloaded = false;\n' +
-  '  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !reloaded) { reloaded = true; location.reload(); } });\n' +
+  '  // ...but never in the middle of a workout: wait until it is finished or discarded\n' +
+  '  const reload = () => { if (window.spBusy && window.spBusy()) setTimeout(reload, 5000); else location.reload(); };\n' +
+  '  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !reloaded) { reloaded = true; reload(); } });\n' +
   '  navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => {\n' +
   '    reg.update().catch(() => {});\n' +
   '    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") reg.update().catch(() => {}); });\n' +
